@@ -1,0 +1,84 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@100..900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Noto Sans Georgian", sans-serif;
+}
+
+// Login scss code start =============
+
+
+.bg-teal {
+  background-color: #409f84;
+}
+
+.signin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .box-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0 15px;
+    height: 810px
+}
+
+
+    .right-content {
+      width: 80%;
+
+      @media (max-width: 992px) {
+        display: none;
+      }
+    }
+
+    .left-content {
+      width: 33%;
+      background: white;
+
+      @media (max-width: 992px) {
+        width: 100%;
+      }
+
+      .logo img {
+        width: 150px;
+      }
+
+      form {
+        display: block;
+
+        input {
+          border: 1px solid rgb(185, 185, 200);
+
+          &:focus {
+            border-color: #00ad7d;
+            background-color: rgba(237, 235, 235, 0.321);
+            outline: none;
+          }
+
+          &[type="submit"] {
+            background-color: #00ad7d;
+            color: white;
+            border: none;
+
+            &:hover {
+              background-color: #171818;
+            }
+          }
+        }
+      }
+
+    }
+  }
+
+
+// Login scss code end ====================

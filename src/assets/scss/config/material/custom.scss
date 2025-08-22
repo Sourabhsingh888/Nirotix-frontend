@@ -1,0 +1,128 @@
+.form-control:focus {
+    background-color: var(--vz-input-bg-custom);
+    border: 1px solid #696cff !important;
+    box-shadow: 0 .125rem .25rem 0 #696cff75;
+}
+
+.editor-input {
+  min-height: 150px;
+  border: 1px solid #d9d9d9;
+  padding: 10px;
+  border-radius: 5px;
+  background: #fff;
+}
+
+.editor-placeholder {
+  color: #aaa;
+  position: absolute;
+  pointer-events: none;
+  padding: 10px;
+}
+
+.dropdown-menu-end.dropdown-menu.show {
+    right: -15px!important;
+    left: inherit !important;
+}
+
+
+// Login page css 
+.bg-overlay {
+    background-image: url("../../../images/bg.svg") !important;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    opacity: 1 !important;
+}
+
+.auth-one-bg {
+    background-image: inherit !important;
+}
+
+.fst-italicAA {
+    color: black !important;
+}
+
+.carousel-indicators [data-bs-target] {
+    background-color: #ababab !important;
+}
+
+.carousel-indicators .active {
+    background-color: #45cb85 !important;
+}
+
+.p-lg-5.p-4.auth-one-bg.h-100 {
+    border-left: 2px solid rgb(240, 240, 240) !important;
+}
+
+.carousel-item>img.golinAA {
+    width: 260px;
+}
+
+.overflow-hidden {
+    overflow: hidden!important;
+    background: inherit !important;
+}
+
+.content-background{background-color: white !important;}
+
+@media (max-width:992px) {
+
+    .content-background {
+        background-color: white !important;
+        padding: 15px !important;
+    }
+
+    .col-lg-7.box-main {
+        width: 100% !important;
+    }
+    .container-login {
+        max-width: 582px !important;
+    }
+
+    .col-lg-5.content-background {
+        display: none !important;
+    }
+}
+
+.auth-bg-cover {
+    background: linear-gradient (inherit) !important;
+}
+
+.bg-overlay {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    opacity: .7;
+    background-color: inherit !important;
+}
+
+.auth-page-wrapper .auth-page-content {
+    margin-top: 15px;
+}
+
+.auth-page-wrapper .auth-page-content {
+    padding-bottom: 20px !important;
+}
+
+.container-login {
+    width: 100%;
+    max-width: 850px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin: 0 auto;
+}
+
+.login-footer {
+    position: inherit !important;
+}
+.ribbon-three {
+    position: absolute;
+    top: -6.1px;
+    left: inherit !important;
+    right: 10px !important;
+}
