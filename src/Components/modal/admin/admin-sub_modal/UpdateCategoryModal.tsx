@@ -31,7 +31,7 @@ const UpdateCategoryModal: React.FC<UpdateCategoryModalProps> = ({
     }
   }, [isOpen, category, dispatch]);
 
-  const { selected, updateState, detailState } = useSelector(
+  const {offset, limit,selected, updateState, detailState } = useSelector(
     (s: RootState) => s.ProductCategory
   );
 
@@ -75,7 +75,7 @@ const UpdateCategoryModal: React.FC<UpdateCategoryModalProps> = ({
     const res = await dispatch(updateProductCategory(payload));
     if (updateProductCategory.fulfilled.match(res)) {
       dispatch(
-        getProductCategories({ offset: 0, limit: 10, context: "table" })
+        getProductCategories({ offset: offset, limit: limit, context: "table" })
       );
       toggle();
     } else {

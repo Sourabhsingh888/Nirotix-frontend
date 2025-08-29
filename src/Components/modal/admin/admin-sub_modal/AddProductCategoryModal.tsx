@@ -21,13 +21,14 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
   const dispatch: AppDispatch = useDispatch<any>();
   const [formData, setFormData] = useState({ name: "", status: "Active" });
 
-  const loading = useSelector(
-    (state: RootState) => state.ProductCategory.addState.loading
+  const {offset, limit, addState,} = useSelector(
+    (s: RootState) => s.ProductCategory
   );
 
+  const loading = addState.loading;
   const errors = useMemo(() => {
     return {
-      name: formData.name ? "" : "Name is required",
+    name: formData.name ? "" : "Name is required",
     };
   }, [formData]);
 
@@ -42,7 +43,7 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
     const resultAction = await dispatch(addProductCategory(formData));
     if (addProductCategory.fulfilled.match(resultAction)) {
       dispatch(
-        getProductCategories({ offset: 0, limit: 10, context: "table" })
+        getProductCategories({ offset: offset, limit: limit, context: "table" })
       );
       setFormData({ name: "", status : "Active" });
       toggle();

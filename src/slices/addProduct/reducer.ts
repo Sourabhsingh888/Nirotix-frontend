@@ -52,8 +52,12 @@ interface ProductState {
   addState: RequestState;
   updateState: RequestState;
   deleteState: RequestState;
-  statusState: StatusRequestState; // ✅ use extended type
+  statusState: StatusRequestState;
   hasMore: boolean;
+
+  // 🔑 pagination
+  offset: number;
+  limit: number;
 }
 
 const initialRequestState: RequestState = {
@@ -75,6 +79,10 @@ const initialState: ProductState = {
   deleteState: { ...initialRequestState },
   statusState: { ...initialRequestState, id: null },
   hasMore: true,
+
+  // ✅ defaults
+  offset: 0,
+  limit: 10,
 };
 
 const ProductSlice = createSlice({
@@ -114,8 +122,13 @@ const ProductSlice = createSlice({
         (state, action: PayloadAction<ProductResponse>) => {
           state.fetchState.loading = false;
           state.fetchState.success = true;
+          
           const { data, recordsTotal, recordsFiltered, offset, context } =
             action.payload;
+
+          // ✅ always update pagination state
+          state.offset = offset;
+          state.limit = 10; // or action.payload.limit if your API sends it
 
           if (context === "table") {
             // Table listing → overwrite (normal pagination)

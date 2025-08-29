@@ -38,6 +38,7 @@ export const getProductCategories = createAsyncThunk(
         searchValue,
         ProductCategoryStatus,
       );
+      
       return {
         data: response.data,
         recordsTotal: response.recordsTotal,

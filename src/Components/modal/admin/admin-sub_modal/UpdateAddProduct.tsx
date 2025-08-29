@@ -25,7 +25,7 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({
 }) => {
   const dispatch: AppDispatch = useDispatch();
 
-  const { selected, detailState, updateState } = useSelector(
+  const {selected, detailState, updateState } = useSelector(
     (s: RootState) => s.AddProduct
   );
   const { dropdownList, fetchState, hasMore } = useSelector(

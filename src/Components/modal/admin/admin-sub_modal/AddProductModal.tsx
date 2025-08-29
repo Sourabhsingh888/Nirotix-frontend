@@ -19,22 +19,24 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const [offset, setOffset] = useState(0);
 
+  const { addState } = useSelector((s: RootState) => s.AddProduct);
+
+  const loading = addState.loading;
+
   useEffect(() => {
-    if (dropdownList.length === 0) {
+    if (isOpen) {
+      setOffset(0);
       dispatch(
-        getProductCategories({ offset: 0, limit: 10, context: "dropdown" })
+      getProductCategories({ offset: 0, limit: 10, context: "dropdown" })
       );
     }
-  }, [dispatch]);
+  }, [dispatch, isOpen]);
 
   const { dropdownList, fetchState, hasMore } = useSelector(
     (s: RootState) => s.ProductCategory
   );
-  
-console.log("dropdownList", dropdownList);  
 
-
-  const loadMore = () => {
+  const loadMore = () => {  
     const nextOffset = offset + 1;
     setOffset(nextOffset);
     dispatch(
@@ -45,8 +47,6 @@ console.log("dropdownList", dropdownList);
       })
     );
   };
-
-  const loading = useSelector((s: RootState) => s.AddProduct.addState.loading);
 
   const [values, setValues] = useState({
     category_id: null,
@@ -85,7 +85,7 @@ console.log("dropdownList", dropdownList);
 
     try {
       await dispatch(addProduct(fd)).unwrap();
-      dispatch(getProducts({ offset: 0, limit: 10, context: "table" }));
+      dispatch(getProducts({ offset: offset, limit: limit, context: "table" }));
       toast.success("Product added successfully!", { autoClose: 2500 });
       toggle();
       setValues({
@@ -128,4 +128,4 @@ console.log("dropdownList", dropdownList);
   );
 };
 
-export default AddProductModal;
+export default AddProductModal; 
