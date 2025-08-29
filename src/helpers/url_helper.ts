@@ -56,6 +56,50 @@ export const ADD_NEW_PRODUCT_PRICING = "/api/v1/product-management/prices/add";
 export const UPDATE_PRODUCT_PRICING = "/api/v1/product-management/prices/update";
 export const DELETE_PRODUCT_PRICING = "/api/v1/product-management/prices/delete";
 
+
+//SERVICE SWITCHING
+export const ADD_NEW_SERVICE_SWITCHING = "/api/v1/setting-management/service-switching/add";
+export const GET_SERVICE_SWITCHING = "/api/v1/setting-management/service-switching/get-list";
+export const UPDATE_SERVICE_SWITCHING = "/api/v1/setting-management/service-switching/update";
+export const DELETE_SERVICE_SWITCHING = "/api/v1/setting-management/service-switching/delete";
+export const SERVICE_SWITCHING_STATUS_CHANGE = "/api/v1/setting-management/service-switching/change-status";
+
+//msg Api
+export const ADD_NEW_MESSAGE_API = "api/v1/msg-management/msg-apis/add";
+export const GET_MESSAGES_LIST_API = "api/v1/msg-management/msg-apis/get-list";
+export const GET_MESSAGE_API_BY_ID = "api/v1/msg-management/msg-apis/byid";
+export const UPDATE_MESSAGE_API = "api/v1/msg-management/msg-apis/update";
+export const DELETE_MESSAGE_API = "api/v1/msg-management/msg-apis/delete";
+export const MESSAGE_API_STATUS_CHANGE = "api/v1/msg-management/msg-apis/change-status";
+
+
+
+
+
+//user dashboard
+
+//White Listed IP
+export const GET_WHITELISTED_IP = "api/v1/developer-api/whitelisted-ip/get-list";
+export const ADD_WHITELISTED_IP = "api/v1/developer-api/whitelisted-ip/add";
+export const DELETE_WHITELISTED_IP = "api/v1/developer-api/whitelisted-ip/delete";
+// export const CHANGE_WHITELISTED_IP = "api/v1/developerApi/whitelisted/changestatus";
+
+
+
+//webhook 
+export const UPDATE_WEBHOOK = "api/v1/developer-api/webhook/update";
+export const GET_WEBHOOK = "api/v1/developer-api/webhook/get-webhook";
+
+
+//Api & key
+export const GET_API_KEYS = "api/v1/developer-api/tokens/get-list";
+export const ADD_API_KEY = "api/v1/developer-api/tokens/generate";
+export const CHANGE_API_KEY = "api/v1/developer-api/tokens/status";
+
+//userdashboard
+export const GET_WALLET = "api/v1/wallet-management/wallet";
+
+
 // Orders
 export const GET_ORDERS = "/order";
 export const ADD_NEW_ORDER = "/add/order";

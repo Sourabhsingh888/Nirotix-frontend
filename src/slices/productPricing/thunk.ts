@@ -11,6 +11,7 @@ import {
 } from "../../helpers/auth_api_helper";
 
 // ---- GET ALL ----
+// src/store/productPricing/thunk.ts
 export const getProductPricing = createAsyncThunk(
   "productPricing/getList",
   async (
@@ -26,23 +27,23 @@ export const getProductPricing = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await getProductPricingListApi(
-        offset,
-        limit,
-        searchValue,
-      );
+      const response = await getProductPricingListApi(offset, limit, searchValue);
+
+      // 👇 API ke structure ke hisab se normalize karo
+      const list = response?.data || [];  // <-- agar "items" ke andar hai to response?.data?.items
 
       return {
-        data: response.data,
-        recordsTotal: response.recordsTotal,
-        recordsFiltered: response.recordsFiltered,
+        data: list,
+        recordsTotal: response?.recordsTotal ?? list.length,
+        recordsFiltered: response?.recordsFiltered ?? list.length,
       };
     } catch (error: any) {
-      toast.error("Failed to load product pricing", { autoClose: 3000 });
       return rejectWithValue(error?.response?.data || error.message);
     }
   }
 );
+
+
 
 // ---- ADD ----
 
@@ -52,7 +53,7 @@ export const addProductPricing = createAsyncThunk(
     try {
       const response = await addProductPricingApi(formData);
       toast.success(response.message, { autoClose: 3000 });
-      return response;
+      return response.data;
     } catch (error: any) {
       const errorMessage =
       error?.message || "Failed to add product pricing";

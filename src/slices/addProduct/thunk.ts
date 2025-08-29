@@ -19,11 +19,15 @@ export const getProducts = createAsyncThunk(
       limit = 10,
       searchValue = "",
       ProductStatus = "",
+      categoryId = "",  // 👈 added
+
     }: {
       offset?: number;
       limit?: number;
       searchValue?: string;
       ProductStatus?: string;
+      categoryId?: string;
+
     },
     { rejectWithValue }
   ) => {
@@ -32,7 +36,9 @@ export const getProducts = createAsyncThunk(
         offset,
         limit,
         searchValue,
-        ProductStatus
+        ProductStatus,
+        categoryId   // 👈 API me bhej do
+
       );
       return {
         data: response.data,

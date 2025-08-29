@@ -29,6 +29,9 @@ interface GeoLocation {
   longitude: number;
 }
 
+
+
+
 // // Thunk: login user
 // export const loginUser = (user: UserLogin, navigate: (path: string) => void) =>
 //   async (dispatch: AppDispatch) => {

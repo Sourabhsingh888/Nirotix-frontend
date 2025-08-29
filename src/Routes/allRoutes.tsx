@@ -274,7 +274,7 @@ const authProtectedRoutes = [
 
   // AadharPan
   {
-    path: "/services/aadhar",
+    path: "/services/aadhaar-okyc",
     component: <AadharOKYC />,
     allowedRoles: ["user"],
   },
@@ -286,193 +286,201 @@ const authProtectedRoutes = [
 
   // Bank Account
   {
-    path: "/services/bank/pennydrop",
+    path: "/services/penny-drop",
     component: <PennyDrop />,
     allowedRoles: ["user"],
   },
 
+
+  
+
+
   // Digital kyc
   {
-    path: "/services/digital-kyc/facematch",
+    path: "/services/face-match",
     component: <FaceMatch />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/digital-kyc/liveliness",
+    path: "/services/liveliness-check",
     component: <LivelinessCheck />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/digital-kyc/namematch",
+    path: "/services/name-match",
     component: <NameMatch />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/digital-kyc/geo-coading",
+    path: "/services/reverse-geocoding",
     component: <ReverseGeocoading />,
     allowedRoles: ["user"],
   },
 
+
   // Kyb(know you business)
   {
-    path: "/services/kyb/cin-mca-lookup",
+    path: "/services/cin-mca-lookup",
     component: <CinMcaLookup />,
     allowedRoles: ["user"],
   },
-  { path: "/services/kyb/gstin", component: <Gstin />, allowedRoles: ["user"] },
+  { path: "/services/gstin", 
+    component: <Gstin />, 
+    allowedRoles: ["user"] },
+
   {
-    path: "/services/kyb/pan-gstin",
+    path: "/services/pan-gstin",
     component: <PanToGistin />,
     allowedRoles: ["user"],
   },
 
   // Other Offical docs
   {
-    path: "/services/other-docs/driving-license",
+    path: "/services/driving-license",
     component: <DrivingLicense />,
   },
   {
-    path: "/services/other-docs/emp",
+    path: "/services/employment-360",
     component: <Employment360 />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/other-docs/mobile",
+    path: "/services/mobile-360",
     component: <Mobile360 />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/other-docs/passport",
+    path: "/services/passport",
     component: <Passport />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/other-docs/vehicle-rc",
+    path: "/services/vehicle-rc",
     component: <VehicleRc />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/other-docs/voterid",
+    path: "/services/voter-id",
     component: <VoterID />,
     allowedRoles: ["user"],
   },
 
   // Telecome Intelligence
   {
-    path: "/services/telecom/dth-customer-info",
+    path: "/services/dth-customer-info",
     component: <DTHCustomerInfo />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/telecom/dth-tariffplans",
+    path: "/services/dth-tariff-plans",
     component: <DTHTariffPlans />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/telecom/lookup",
+    path: "/services/number-lookup",
     component: <NumberLookup />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/telecom/prepaid-tariffplans",
+    path: "/services/prepaid-tariff-plans",
     component: <PrepaidTariffPlans />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/telecom/special-offer",
+    path: "/services/special-offer-check",
     component: <SpecialOffercheck />,
     allowedRoles: ["user"],
   },
 
   // Utility Bill Intelligence
   {
-    path: "/services/utility/broadband",
+    path: "/services/broadband-postpaid",
     component: <BroadbandPostpaid />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/utility/cable",
+    path: "/services/cable-tv",
     component: <CableTV />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/utility/club-assoc",
+    path: "/services/club-associations",
     component: <ClubsAssociations />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/utility/credit-card",
+    path: "/services/credit-card",
     component: <CreditCard />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/utility/donation",
+    path: "/services/donation",
     component: <Donation />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/utility/electricity",
+    path: "/services/electricity",
     component: <Electricity />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/utility/fastag",
+    path: "/services/fastag",
     component: <FASTag />,
     allowedRoles: ["user"],
   },
-  { path: "/services/utility/gas", component: <Gas />, allowedRoles: ["user"] },
+  { path: "/services/gas", component: <Gas />, allowedRoles: ["user"] },
   {
-    path: "/services/utility/hospital",
+    path: "/services/hospital-pathology",
     component: <HospitalPathology />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/utility/housing",
+    path: "/services/housing-society",
     component: <HousingSociety />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/utility/insurance",
+    path: "/services/insurance",
     component: <Insurance />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/utility/landline",
+    path: "/services/landline-postpaid",
     component: <LandlinePostpaid />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/utility/loan-repayment",
+    path: "/services/loan-repayment",
     component: <LoanRepayment />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/utility/lpg",
+    path: "/services/lpg-gas",
     component: <LPGGas />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/utility/muncipal-serivices",
+    path: "/services/municipal-services",
     component: <MunicipalServices />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/utility/postpaid",
+    path: "/services/postpaid",
     component: <Postpaid />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/utility/rental",
+    path: "/services/rental",
     component: <Rental />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/utility/subscription",
+    path: "/services/subscription",
     component: <Subscription />,
     allowedRoles: ["user"],
   },
   {
-    path: "/services/utility/water",
+    path: "/services/water",
     component: <Water />,
     allowedRoles: ["user"],
   },

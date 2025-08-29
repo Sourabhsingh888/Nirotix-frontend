@@ -1,6 +1,7 @@
 import { APIClient } from "./api_helper";
 
 import * as url from "./url_helper";
+import { ADD_API_KEY, CHANGE_API_KEY, GET_API_KEYS } from "./url_helper";
 
 const api = new APIClient();
 
@@ -159,13 +160,16 @@ export const getProductList = (
   offset: number = 0,
   limit: number = 10,
   searchValue: string = "",
-  ProductStatus: string = ""
+  ProductStatus: string = "",
+  categoryId?: string
+  
 
 ) => api.create(url.GET_PRODUCT, {
     offset,
     limit,
     searchValue,
     ProductStatus,
+    categoryId
   });
 
 // add Product
@@ -212,7 +216,191 @@ export const updateProductPricingList = (productdata: {
 export const deleteProductPricingList = (id: number | string) => api.delete(`${url.DELETE_PRODUCT_PRICING}/${id}`);
 
 
-// ==============================================================================================
+// ====================== SERVICE SWITCHING ==================================================
+
+// get Service Switching list
+export const getServiceSwitchingList = (
+  offset: number = 0,
+  limit: number = 10,
+  searchValue: string = "",
+  product_id?: string | number,
+  apiId?: string | number,
+  status?: string
+) => api.create(url.GET_SERVICE_SWITCHING, {
+  offset,
+  limit,
+  searchValue,
+  product_id,
+  apiId,
+  status
+});
+
+// add new Service Switching
+export const addServiceSwitching = (serviceData: any) => 
+  api.create(url.ADD_NEW_SERVICE_SWITCHING, serviceData);
+
+// update existing Service Switching
+export const updateServiceSwitching = (serviceData: {
+  id: string | number;
+  api_id: number;
+  product_id: number;
+  api_code?: string;
+  rate: string | number;
+  commission_surcharge?: string | number;
+  flat_per?: string;
+  gst?: number;
+  tds?: number;
+  txn_limit?: number;
+  status: string;
+  
+  
+}) => api.put(`${url.UPDATE_SERVICE_SWITCHING}/${serviceData.id}`, {
+  api_id: serviceData.api_id,
+  product_id: serviceData.product_id,
+  api_code: serviceData.api_code,
+  rate: serviceData.rate,
+  commission_surcharge: serviceData.commission_surcharge,
+  flat_per: serviceData.flat_per,
+  gst: serviceData.gst,
+  tds: serviceData.tds,
+  txn_limit: serviceData.txn_limit,
+  status: serviceData.status,
+});
+
+// delete Service Switching
+export const deleteServiceSwitching = (id: number | string) => 
+  api.delete(`${url.DELETE_SERVICE_SWITCHING}/${id}`);
+
+
+//============================MSG API=================================
+// get Message list
+export const getMessageList = (
+  offset: number = 0,
+  limit: number = 10,
+  searchValue: string = "",
+  api_type: string,
+  status: string
+) =>
+  api.create(url.GET_MESSAGES_LIST_API, {
+    offset,
+    limit,
+    searchValue,
+    api_type,
+    status,
+  });
+
+// add new Message
+export const addMessageList = (messageData: any) =>
+  api.create(url.ADD_NEW_MESSAGE_API, {
+    api_name: messageData.apiName?.trim(),
+    api_type: messageData.apiType === "whatsapp" ? "Whatsapp" : "SMS",
+    base_url: messageData.baseUrl,
+    params: messageData.apiParams,
+    method: messageData.apiMethod,
+    status: messageData.status,
+  });
+
+
+// update message api
+export const updateMessageList = (messageData: {
+  id: string | number;
+  api_name: string;
+  api_type: string;
+  base_url: string;
+  params?: string;
+  method?: string;
+  status: string;
+}) =>
+  api.put(`${url.UPDATE_MESSAGE_API}/${messageData.id}`, {
+    api_name: messageData.api_name,
+    api_type: messageData.api_type,
+    base_url: messageData.base_url,
+    params: messageData.params,
+    method: messageData.method,
+    status: messageData.status,
+  });
+
+  export const getMessageByIdList = (id: number | string) =>
+  api.get(`${url.GET_MESSAGE_API_BY_ID}/${id}`);
+
+// delete message api
+export const deleteMessageList = (id: number | string) =>
+  api.delete(`${url.DELETE_MESSAGE_API}/${id}`);
+
+// change message api status
+export const changeMessageApiStatus = (id: number | string) => {
+  return api.update(`${url.MESSAGE_API_STATUS_CHANGE}/${id}`);
+};
+
+
+
+
+// White Listed IP
+
+
+// Get Whitelisted IP List
+export const getWhitelistedIpList = () =>
+  api.get(`${url.GET_WHITELISTED_IP}`);
+
+
+// Add new Whitelisted IP
+export const addWhitelistedIp = (ipData: { ip_address: string }) =>
+  api.create(url.ADD_WHITELISTED_IP, ipData);
+
+// Delete Whitelisted IP
+export const deleteWhitelistedIp = (id: number | string) =>
+  api.delete(`${url.DELETE_WHITELISTED_IP}/${id}`);
+
+
+// Change Whitelisted IP Status (Active / Inactive)
+// export const changeWhitelistedIpStatus = (
+//   id: number | string,
+//   status: "Active" | "Inactive"
+// ) => api.put(`${url.CHANGE_WHITELISTED_IP}/${id}`, { status });
+
+
+
+
+//webhook
+
+//update
+export const updateWebhook = (data: { url: string }) =>
+  api.put(url.UPDATE_WEBHOOK, data);
+
+//get
+export const getWebhook = () => api.get(`${url.GET_WEBHOOK}`);
+
+
+
+//api & key
+
+
+// Add API Key
+//  Get all API Keys
+export const getApiTokenKeys = () => api.get(`${GET_API_KEYS}`);
+
+//  Add / Generate new API Key
+export const addApiTokenKey = (data: { token_type: string }) =>
+  api.create(`${ADD_API_KEY}`, data);
+
+// Change API Key Status (Active / Inactive)
+// export const changeApiTokenKeyStatus = (id: string | number, data: { status: string }) =>
+//   api.put(`${CHANGE_API_KEY}/${id}`, data);
+
+
+
+//userdashboard
+
+// Get User Dashboard wallet
+export const getUserDashboardWallet = () => api.get(`${url.GET_WALLET}`);
+
+
+
+// ==================================================================================================
+
+
+
+
 // get Orders
 export const getOrders = () => api.get(url.GET_ORDERS, '');
 

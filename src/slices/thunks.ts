@@ -16,6 +16,24 @@ export * from "./productCategory/thunk";
 export * from './addProduct/thunk';
 export * from './productPricing/thunk';
 
+//Service Switching
+export * from "./ServicesSwitching/thunk";
+
+// Msg API
+export * from "./msgApi/thunk";
+
+// Whitelist
+export * from "./whitelistSlice/thunk";
+
+// Webhook
+export * from "./webhook/thunk";
+
+// API Key Token
+export * from "./apiKeyToken/thunk";
+
+// Wallet
+export * from "./wallet/thunk";
+
 // Tasks
 export * from "./tasks/thunk";
 //Crypto

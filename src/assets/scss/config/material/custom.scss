@@ -66,6 +66,54 @@
 
 .content-background{background-color: white !important;}
 
+
+
+.custom-modal-header .modal-title,
+.custom-modal-header .btn-close {
+  color: #fff !important; 
+}
+
+.custom-modal-header {
+  padding-bottom: 16px !important; 
+  padding-left: 22px !important;
+}
+
+/* Dark mode */
+[data-bs-theme="dark"] .modal-dialog:not(.modal-dialog-scrollable) .modal-header {
+    background: #212529 !important;
+    color: #fff;
+    padding-bottom: 0;
+}
+.modal-content {
+border: inherit !important;
+}
+
+
+
+
+
+
+/* global css file me add karein (jaise App.css) */
+@keyframes slow-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-animation {
+  display: inline-block;
+  animation: slow-spin 1s linear infinite; /* speed control yaha */
+}
+
+
+
+
+
+
+
 @media (max-width:992px) {
 
     .content-background {

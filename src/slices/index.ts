@@ -24,6 +24,25 @@ import AddProductreducer  from "./addProduct/reducer";
 //Pricing
 import ProductPricingReducer from "./productPricing/reducer";
 
+//service switching
+import ServiceSwitchingReducer from "./ServicesSwitching/reducer";
+
+//msg api
+import MsgApiReducer from "./msgApi/reducer";
+
+//whitelist
+import WhitelistReducer from "./whitelistSlice/reducer";
+
+//webhook
+import webhookReducer from "./webhook/reducer";
+
+//Api & key token
+import ApiKeyTokenReducer from "./apiKeyToken/reducer";
+
+//user wallet
+import walletReducer from "./wallet/reducer";
+
+
 // Tasks
 import TasksReducer from "./tasks/reducer";
 
@@ -74,6 +93,8 @@ import JobReducer from "./jobs/reducer";
 // API Key
 import APIKeyReducer from "./apiKey/reducer";
 
+
+
 const rootReducer = combineReducers({
     Layout: LayoutReducer,
     Login: LoginReducer,
@@ -85,6 +106,14 @@ const rootReducer = combineReducers({
     ProductCategory: ProductCategoryReducer,
     AddProduct: AddProductreducer,
     ProductPrice: ProductPricingReducer,
+    ServiceSwitching: ServiceSwitchingReducer,
+    MsgApi: MsgApiReducer,
+    WhitelistApi: WhitelistReducer,
+    WebhookApi: webhookReducer,
+    ApiKeyToken: ApiKeyTokenReducer,
+    Wallet: walletReducer,
+
+
     Tasks: TasksReducer,
     Crypto: CryptoReducer,
     Tickets: TicketsReducer,
