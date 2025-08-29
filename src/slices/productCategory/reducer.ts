@@ -2,15 +2,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   getProductCategories,
+  getProductCategoryById,
   addProductCategory,
   updateProductCategory,
   deleteProductCategory,
+  categoryStatusChange,
 } from "./thunk";
 
 interface ProductCategory {
   id: number;
   name: string;
-  status: "active" | "inactive";
+  status: string,
   recordsTotal: number;
   recordsFiltered: number;
 }
@@ -19,6 +21,8 @@ interface ProductCategoryResponse {
   data: ProductCategory[];
   recordsTotal: number;
   recordsFiltered: number;
+  offset: number;
+  context: string;
 }
 
 interface RequestState {
@@ -27,15 +31,25 @@ interface RequestState {
   error: string | null;
 }
 
+interface StatusState extends RequestState {
+  id?: number | null;
+}
+
 interface ProductCategoryState {
-  list: ProductCategory[];
+  tableList: ProductCategory[];
+  selected: ProductCategory | null;
+  dropdownList: ProductCategory[];
   recordsTotal: number;
   recordsFiltered: number;
   fetchState: RequestState;
+  detailState: RequestState; // ✅ for getById
   addState: RequestState;
   updateState: RequestState;
   deleteState: RequestState;
+  statusState: StatusState; // ✅ custom type with id
+  hasMore: boolean;
 }
+
 
 const initialRequestState: RequestState = {
   loading: false,
@@ -44,14 +58,20 @@ const initialRequestState: RequestState = {
 };
 
 const initialState: ProductCategoryState = {
-  list: [],
+  tableList: [],
+  dropdownList: [],
+  selected: null,
   recordsTotal: 0,
   recordsFiltered: 0,
   fetchState: { ...initialRequestState },
+  detailState: { ...initialRequestState }, // ✅ added
   addState: { ...initialRequestState },
   updateState: { ...initialRequestState },
   deleteState: { ...initialRequestState },
+  statusState: { ...initialRequestState, id: null }, // ✅ fixed
+  hasMore: true,
 };
+
 
 const ProductCategorySlice = createSlice({
   name: "productCategory",
@@ -69,6 +89,14 @@ const ProductCategorySlice = createSlice({
     resetFetchState: (state) => {
       state.fetchState = { ...initialRequestState };
     },
+    resetStatusState: (state) => {
+      // ✅ new
+      state.statusState = { ...initialRequestState };
+    },
+    resetSelected: (state) => {
+      // ✅ for clearing single record
+      state.selected = null;
+    },
   },
   extraReducers: (builder) => {
     // Fetch Categories
@@ -82,17 +110,58 @@ const ProductCategorySlice = createSlice({
         (state, action: PayloadAction<ProductCategoryResponse>) => {
           state.fetchState.loading = false;
           state.fetchState.success = true;
-          state.list = action.payload.data;
-          state.recordsTotal = action.payload.recordsTotal;
-          state.recordsFiltered = action.payload.recordsFiltered;
+
+          const { data, recordsTotal, recordsFiltered, offset, context } =
+            action.payload;
+          
+
+          if (context === "table") {
+            // Table listing → overwrite (normal pagination)
+            state.tableList = data;
+            state.recordsTotal = recordsTotal;
+            state.recordsFiltered = recordsFiltered;
+          }
+
+if (context === "dropdown") {
+  if (offset === 0) {
+    state.dropdownList = data;
+  } else {
+    state.dropdownList = [...state.dropdownList, ...data];
+  }
+
+  // Use recordsTotal to calculate if more exist
+  const loadedSoFar = state.dropdownList.length;
+  state.hasMore = loadedSoFar < recordsTotal;
+}
+
         }
       )
+
       .addCase(getProductCategories.rejected, (state, action) => {
         state.fetchState.loading = false;
         state.fetchState.error =
           (action.payload as string) ||
           action.error.message ||
           "Failed to fetch categories";
+      });
+
+    // Fetch by ID
+    builder
+      .addCase(getProductCategoryById.pending, (state) => {
+        state.detailState.loading = true;
+        state.detailState.error = null;
+      })
+      .addCase(getProductCategoryById.fulfilled, (state, action) => {
+        state.detailState.loading = false;
+        state.detailState.success = true;
+        state.selected = action.payload;
+      })
+      .addCase(getProductCategoryById.rejected, (state, action) => {
+        state.detailState.loading = false;
+        state.detailState.error =
+          (action.payload as string) ||
+          action.error.message ||
+          "Failed to fetch product by id";
       });
 
     // Add Category
@@ -106,7 +175,7 @@ const ProductCategorySlice = createSlice({
         (state, action: PayloadAction<ProductCategory>) => {
           state.addState.loading = false;
           state.addState.success = true;
-          state.list.push(action.payload);
+          state.tableList.push(action.payload);
         }
       )
       .addCase(addProductCategory.rejected, (state, action) => {
@@ -128,11 +197,11 @@ const ProductCategorySlice = createSlice({
         (state, action: PayloadAction<ProductCategory>) => {
           state.updateState.loading = false;
           state.updateState.success = true;
-          const index = state.list.findIndex(
+          const index = state.tableList.findIndex(
             (cat) => cat.id === action.payload.id
           );
           if (index !== -1) {
-            state.list[index] = action.payload;
+            state.tableList[index] = action.payload;
           }
         }
       )
@@ -155,7 +224,9 @@ const ProductCategorySlice = createSlice({
         (state, action: PayloadAction<number>) => {
           state.deleteState.loading = false;
           state.deleteState.success = true;
-          state.list = state.list.filter((item) => item.id !== action.meta.arg);
+          state.tableList = state.tableList.filter(
+            (item) => item.id !== action.meta.arg
+          );
 
           // 🔄 Decrement totals
           state.recordsTotal = Math.max(state.recordsTotal - 1, 0);
@@ -170,6 +241,40 @@ const ProductCategorySlice = createSlice({
           action.error.message ||
           "Failed to delete category";
       });
+
+    // ---------------- Change Status ----------------
+    builder
+      .addCase(categoryStatusChange.pending, (state, action) => {
+        const { id, currentStatus } = action.meta.arg;
+        const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
+
+        // Optimistic UI update
+        const index = state.tableList.findIndex((cat) => cat.id === id);
+        if (index !== -1) {
+          state.tableList[index].status = newStatus;
+        }
+
+        state.statusState.loading = true;
+        state.statusState.id = id;
+      })
+      .addCase(categoryStatusChange.fulfilled, (state, action) => {
+        state.statusState.loading = false;
+        state.statusState.success = true;
+        state.statusState.id = null;
+      })
+      .addCase(categoryStatusChange.rejected, (state, action) => {
+        state.statusState.loading = false;
+        state.statusState.success = false;
+        state.statusState.error = action.payload || "Failed to update";
+        state.statusState.id = null;
+
+        // 🔄 rollback status if API failed
+        const { id, currentStatus } = action.meta.arg;
+        const index = state.tableList.findIndex((cat) => cat.id === id);
+        if (index !== -1) {
+          state.tableList[index].status = currentStatus; // revert
+        }
+      });
   },
 });
 
@@ -178,6 +283,8 @@ export const {
   resetUpdateState,
   resetDeleteState,
   resetFetchState,
+  resetStatusState,
+  resetSelected,
 } = ProductCategorySlice.actions;
 
 export default ProductCategorySlice.reducer;

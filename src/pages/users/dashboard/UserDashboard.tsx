@@ -535,8 +535,6 @@
 
 
 
-
-
 import React, { useState, useEffect } from "react";
 import {
   Container,
@@ -546,7 +544,7 @@ import {
   Row,
   Col,
 } from "reactstrap";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import classnames from "classnames";
 import AddMoneyModal from "../../../Components/modal/user/user-sub_modal/AddMoneyModal";
 import { useDispatch, useSelector } from "react-redux";
@@ -556,8 +554,6 @@ import { getProducts } from "../../../slices/addProduct/thunk";
 import { getProductPricing } from "../../../slices/productPricing/thunk";
 import { getWalletApi } from "../../../slices/wallet/thunk";
 import SkeletonWrapper from "../../../Components/Common/SkeletonWrapper";
-import { useNavigate } from "react-router-dom";
-
 
 const UserDashboard = () => {
   document.title = "User Dashboard";
@@ -570,10 +566,10 @@ const UserDashboard = () => {
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   // Redux state
-  const { list: categories, fetchState: { loading: categoryLoading } } = useSelector(
+  const { dropdownList: categories, fetchState: { loading: categoryLoading } } = useSelector(
     (state: RootState) => state.ProductCategory
   );
-  const { list: products, fetchState: { loading: productLoading } } = useSelector(
+  const { tableList: products, fetchState: { loading: productLoading } } = useSelector(
     (state: RootState) => state.AddProduct
   );
   const { list: pricingList, fetchState: { loading: pricingLoading } } = useSelector(
@@ -587,49 +583,51 @@ const UserDashboard = () => {
 
   // Initial data fetch
   useEffect(() => {
-    dispatch(getWalletApi());
-    dispatch(getProductCategories({ offset: 0, limit: 10 }));
+    dispatch(getWalletApi()).catch(err => console.error(err));
+    dispatch(getProductCategories({ offset: 0, limit: 10, context: "dropdown" })).catch(err => console.error(err));
   }, [dispatch]);
 
+  // Set default active tab when categories load
   useEffect(() => {
-    if (categories.length > 0 && !activeTab) {
+    if (categories.length && !activeTab) {
       setActiveTab(categories[0].id);
     }
   }, [categories, activeTab]);
 
+  // Fetch products on activeTab change
   useEffect(() => {
     if (activeTab) {
-      dispatch(
-        getProducts({
-          offset: 0,
-          limit: 50,
-          searchValue: "",
-          ProductStatus: "ACTIVE",
-          categoryId: activeTab,
-        })
-      );
+     dispatch(getProducts({
+  offset: 0,
+  limit: 50,
+  searchValue: "",
+  ProductStatus: "ACTIVE",
+  categoryId: activeTab,
+  context: "table"   // ✅ add this
+}))
+
     }
   }, [dispatch, activeTab]);
 
+  // Fetch pricing once products are available
   useEffect(() => {
     if (products.length > 0) {
-      dispatch(getProductPricing({ offset: 0, limit: 100, searchValue: "" }));
+      dispatch(getProductPricing({ offset: 0, limit: 100, searchValue: "" }))
+        .catch(err => console.error(err));
     }
   }, [dispatch, products]);
 
-  // Wallet refresh handler (local spinner)
+  // Wallet refresh handler
   const handleWalletRefresh = () => {
     setWalletRefreshing(true);
-    dispatch(getWalletApi()).finally(() => {
-      setTimeout(() => setWalletRefreshing(false), 1000);
-    });
+    dispatch(getWalletApi())
+      .catch(err => console.error(err))
+      .finally(() => setTimeout(() => setWalletRefreshing(false), 1000));
   };
 
-const handleExploreClick = (product: any) => {
-  
-  navigate(`/services/${product.slug}`, { state: { product } });
-  console.log(product);
-};
+  const handleExploreClick = (product: any) => {
+    navigate(`/services/${product.slug}`, { state: { product } });
+  };
 
   return (
     <div className="page-content">
@@ -644,12 +642,9 @@ const handleExploreClick = (product: any) => {
               <div className="card-body">
                 {(walletLoading && !walletRefreshing) ? (
                   <div className="d-flex">
-                    {/* Left side: 3 items */}
                     <div className="me-3" style={{ flex: 3 }}>
                       <SkeletonWrapper type="form" rows={3} columns={1} />
                     </div>
-
-                    {/* Right side: 2 items */}
                     <div style={{ flex: 2 }}>
                       <SkeletonWrapper type="form" rows={2} columns={1} />
                     </div>
@@ -673,12 +668,9 @@ const handleExploreClick = (product: any) => {
                         <span className="text-muted" style={{ fontWeight: '600', color: '#333' }}>
                           Last updated at{" "}<br />
                           <span id="refresh-date" style={{ fontWeight: '400', color: '#000000' }}>
-                            {wallet?.updated_at
-                              ? new Date(wallet.updated_at).toLocaleString() 
-                              : "N/A"}
+                            {wallet?.updated_at ? new Date(wallet.updated_at).toLocaleString() : "N/A"}
                           </span>
                         </span>
-
                       </div>
                       <div className="text-center">
                         <i
@@ -698,23 +690,16 @@ const handleExploreClick = (product: any) => {
                 <div className="card-footer bg-light-alt m-0">
                   <div className="d-flex justify-content-between w-100">
                     <span className="text-muted card-text">Lien Balance</span>
-                    <span className=" card-text">
-                      ₹ <span id="lien_balance">{wallet?.lien_balance ?? 0}</span>
-                    </span>
+                    <span className="card-text">₹ <span id="lien_balance">{wallet?.lien_balance ?? 0}</span></span>
                   </div>
                   <div className="d-flex justify-content-between w-100 mt-2">
                     <span className="text-muted card-text">
                       Free Balance{" "}
                       <span className="badge bg-danger">
-                        Expire{" "}
-                        {wallet?.balance_expire_at
-                          ? new Date(wallet.balance_expire_at).toLocaleDateString()
-                          : ""}
+                        Expire{" "}{wallet?.balance_expire_at ? new Date(wallet.balance_expire_at).toLocaleDateString() : ""}
                       </span>
                     </span>
-                    <span className=" card-text">
-                      ₹ <span id="free_balance">{wallet?.free_balance ?? 0}</span>
-                    </span>
+                    <span className="card-text">₹ <span id="free_balance">{wallet?.free_balance ?? 0}</span></span>
                   </div>
                 </div>
               )}
@@ -738,8 +723,8 @@ const handleExploreClick = (product: any) => {
               <SkeletonWrapper type="tabs" rows={2} columns={7} />
             ) : (
               <ul className="nav nav-tabs nav-tabs-custom" role="tablist" id="bottom-tab">
-                {categories.map((tab: any, index: number) => (
-                  <li key={index} className="nav-item product_category" data-id={tab.id} role="presentation">
+                {categories.map((tab: any) => (
+                  <li key={tab.id} className="nav-item product_category" data-id={tab.id} role="presentation">
                     <button
                       className={classnames("nav-link", { active: activeTab === tab.id })}
                       onClick={() => setActiveTab(tab.id)}
@@ -767,13 +752,12 @@ const handleExploreClick = (product: any) => {
                         <CardBody className="text-muted">
                           <span className="ribbon-three ribbon-three-primary">
                             <span>
-                              {pricing?.price ? `₹ ${pricing.price}` : "N/A"}
+                              {pricing?.price || pricing?.price === 0 ? `₹ ${pricing.price}` : "N/A"}
                             </span>
-
                           </span>
                           <h4 className="card-title mt-4">{card.name}</h4>
                           <p className="card-text text-muted">{card.description}</p>
-                           <Button color="primary" outline onClick={() => handleExploreClick(card)}>
+                          <Button color="primary" outline onClick={() => handleExploreClick(card)}>
                             Explore
                           </Button>
                         </CardBody>
@@ -791,7 +775,6 @@ const handleExploreClick = (product: any) => {
 };
 
 export default UserDashboard;
-
 
 
 

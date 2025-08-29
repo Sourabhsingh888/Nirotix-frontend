@@ -7,9 +7,9 @@ import {
   CardBody,
   CardHeader,
   Button,
+  Badge,
   Input,
   Table,
-  Badge,
   Pagination,
   PaginationItem,
   PaginationLink,
@@ -20,9 +20,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../../Store";
 import Swal from "sweetalert2";
 import BreadCrumb from "../../../Components/Common/BreadCrumb";
+import CategorySkeletonRow from "../../../Components/Common/CategorySkeletonRow";
 import AddProductModal from "../../../Components/modal/admin/admin-sub_modal/AddProductModal";
 import UpdateProductModal from "../../../Components/modal/admin/admin-sub_modal/UpdateAddProduct";
-import { getProducts, deleteProduct } from "../../../slices/addProduct/thunk";
+import { getProducts, deleteProduct, productStatusChange } from "../../../slices/addProduct/thunk";
 
 const SelectOption = [
   { value: "All", label: "All" },
@@ -33,15 +34,11 @@ const SelectOption = [
 const Products = () => {
   document.title = "Products";
   const dispatch: AppDispatch = useDispatch();
-  const { list, fetchState, recordsTotal, recordsFiltered } = useSelector(
-    (state: RootState) => state.AddProduct
-  );
+  const { tableList, fetchState, recordsTotal, recordsFiltered, statusState } =
+    useSelector((state: RootState) => state.AddProduct);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [productStatus, setproductStatus] = useState<{
-    value: string;
-    label: string;
-  } | null>(null);
+  const [productStatus, setproductStatus] = useState<any | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -58,8 +55,9 @@ const Products = () => {
       getProducts({
         offset: currentPage - 1,
         limit: itemsPerPage,
+        context: "table",
         searchValue: searchValue.trim(),
-        ProductStatus: productStatus?.value || "",
+        ProductStatus:productStatus || "",
       })
     );
   }, [dispatch, productStatus, searchValue, currentPage]);
@@ -84,24 +82,35 @@ const Products = () => {
       cancelButtonColor: "#f46a6a",
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "Cancel",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        dispatch(deleteProduct(id)).then(() => {
-          Swal.fire({
-            icon: "success",
-            title: "Deleted!",
-            text: "Product deleted successfully.",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-        });
-      }
+      preConfirm: () => {
+        Swal.showLoading();
+        return dispatch(deleteProduct(id))
+          .unwrap()
+          .catch(() => {});
+      },
     });
   };
 
-  const handleEdit = (product: any) => {
-    setSelectedProduct(product);
+  const handleEdit = (id: any) => {
+    setSelectedProduct(id);
     setIsUpdateModalOpen(true);
+  };
+
+  function formatToIST(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  }
+
+  const clearStatus = () => {
+    setproductStatus(null);
   };
 
   return (
@@ -139,26 +148,49 @@ const Products = () => {
                 </Button>
               </Col>
             </Row>
+            <Row>
+              {/* ✅ Show selected badges */}
+              {productStatus && (
+                <div className="mt-2 d-flex flex-wrap gap-2">
+                  <Badge
+                    pill
+                    className="px-3 py-2"
+                    style={{ cursor: "pointer" }}
+                    onClick={clearStatus}
+                  >
+                    {productStatus.label} <i className="ri-close-line ms-1"></i>
+                  </Badge>
+                </div>
+              )}
+            </Row>
           </CardBody>
 
           <AddProductModal isOpen={isAddModalOpen} toggle={toggleAddModal} />
           <UpdateProductModal
             isOpen={isUpdateModalOpen}
             toggle={toggleUpdateModal}
-            product={selectedProduct}
+            category={selectedProduct}
           />
 
           <CardBody>
             {fetchState.loading ? (
-              <div
-                className="d-flex justify-content-center align-items-center"
-                style={{ height: 200 }}
-              >
-                <Spinner color="primary" />
-              </div>
+              <CategorySkeletonRow
+                type="table"
+                columns={[
+                  "#",
+                  "Icon",
+                  "Category",
+                  "Name",
+                  "Slug",
+                  "Created",
+                  "Status",
+                  "Action",
+                ]}
+                rows={5}
+              />
             ) : fetchState.error ? (
               <div className="text-center text-danger">{fetchState.error}</div>
-            ) : list.length > 0 ? (
+            ) : tableList.length > 0 ? (
               <>
                 <div className="table-responsive">
                   <Table className="align-middle table-nowrap mb-0">
@@ -169,14 +201,14 @@ const Products = () => {
                         <th>Category</th>
                         <th>Name</th>
                         <th>Slug</th>
-                        <th>Status</th>
                         <th>Created</th>
+                        <th>Status</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {list && list.length > 0 ? (
-                        list.map((item) => (
+                      {tableList && tableList.length > 0 ? (
+                        tableList.map((item) => (
                           <tr key={item.id}>
                             <td>{item.serial_no}</td>
                             <td>
@@ -196,25 +228,38 @@ const Products = () => {
                             <td>
                               <b>{item.slug}</b>
                             </td>
+                            <td>{formatToIST(item.created_at)}</td>
                             <td>
-                              <Badge
-                                color={
+                              <span
+                                className={`badge ${
                                   item.status === "Active"
-                                    ? "success"
-                                    : "danger"
+                                    ? "bg-success-subtle text-success"
+                                    : "bg-danger-subtle text-danger"
+                                }`}
+                                style={{ cursor: "pointer" }}
+                                onClick={() =>
+                                  dispatch(
+                                    productStatusChange({
+                                      id: item.id,
+                                      currentStatus: item.status,
+                                    })
+                                  )
                                 }
-                                pill
                               >
-                                {item.status?.toUpperCase() || ""}
-                              </Badge>
+                                {statusState.loading &&
+                                statusState.id === item.id ? (
+                                  <Spinner size="sm" />
+                                ) : (
+                                  item.status?.toUpperCase()
+                                )}
+                              </span>
                             </td>
-                            <td>{item.created_at}</td>
                             <td>
                               <Button
                                 color="primary"
                                 size="sm"
                                 className="me-2"
-                                onClick={() => handleEdit(item)}
+                                onClick={() => handleEdit(item.id)}
                               >
                                 <i className="ri-pencil-line me-1"></i> Edit
                               </Button>

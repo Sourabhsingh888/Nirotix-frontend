@@ -14,6 +14,7 @@ import type { RootState, AppDispatch } from "../../Store"; // adjust path as nee
 import logo from "../../assets/images/logo.svg";
 import mfaImage from "../../assets/images/MFA_illustration.svg";
 import passwordlessImage from "../../assets/images/Passwordless_illustration.svg";
+import { toast } from "react-toastify";
 
 const Login = () => {
   document.title = "Login";
@@ -22,7 +23,6 @@ const Login = () => {
 const { loading, error, errorMsg } = useSelector(
   (state: RootState) => state.Login
 );
-  console.log("loading", loading);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,6 +31,7 @@ const { loading, error, errorMsg } = useSelector(
   const [browser, setBrowser] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
+
 
   // Get user geolocation
   useEffect(() => {
@@ -72,6 +73,20 @@ useEffect(() => {
     console.log("loginData", loginData);
     dispatch(loginUser(loginData, navigate));
   };
+
+useEffect(() => {
+  let timer: NodeJS.Timeout;
+
+  if (loading) {
+    // start timer when loading begins
+    timer = setTimeout(() => {
+      toast.warning("Internet seems slow, please wait...");
+    }, 5000); // 5 seconds
+  }
+
+  return () => clearTimeout(timer);
+}, [loading]);
+
 
   return (
     <>

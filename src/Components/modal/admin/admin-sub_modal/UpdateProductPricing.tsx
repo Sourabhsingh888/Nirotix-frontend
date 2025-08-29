@@ -1,24 +1,174 @@
-import React, { useState, useEffect, useCallback } from "react";
+// import React, { useEffect, useMemo, useState } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import BaseModal from "../../basemodal/BaseModal";
+// import ProductPricing from "../../../../pages/Admin/productManagement/productPricingmodalform/AddProductPricing";
+// import {
+//   updateProductPricing,
+//   getProductPricing,
+//   getProductPricingById,
+// } from "../../../../slices/productPricing/thunk";
+// import { getProducts } from "../../../../slices/addProduct/thunk";
+// import { RootState, AppDispatch } from "../../../../Store";
+// import CategorySkeletonRow from "../../../Common/CategorySkeletonRow";
+// import { toast } from "react-toastify";
+
+// interface UpdateProductPricingModalProps {
+//   isOpen: boolean;
+//   toggle: () => void;
+//   productPricing?: number;
+// }
+
+// const UpdateProductPricingModal: React.FC<UpdateProductPricingModalProps> = ({
+//   isOpen,
+//   toggle,
+//   productPricing,
+// }) => {
+//   const dispatch: AppDispatch = useDispatch();
+
+//   // fetch pricing by id + products dropdown when opened
+//   useEffect(() => {
+//     if (isOpen && productPricing) {
+//       dispatch(getProductPricingById(productPricing));
+//       dispatch(getProducts({ offset: 0, limit: 10, context: "dropdown" }));
+//     }
+//   }, [isOpen, productPricing, dispatch]);
+
+//   const { selected, detailState, updateState } = useSelector(
+//     (s: RootState) => s.ProductPrice
+//   );
+//   const { productdropdownList } = useSelector((s: RootState) => s.AddProduct);
+
+//   // local state controlled by parent (this modal)
+//   const [values, setValues] = useState({
+//     product_id: "" as number | string | "",
+//     price: "",
+//     currency: "INR",
+//   });
+
+//   // when selected is loaded, prefill
+//   useEffect(() => {
+//     if (selected && isOpen) {
+//       setValues({
+//         product_id: (selected as any).product_id ?? "",
+//         price: String((selected as any).price ?? ""),
+//         currency: (selected as any).currency ?? "INR",
+//       });
+//     }
+//   }, [selected, isOpen]);
+
+//   // build product options; ensure selected product is present
+//   const productOptions = useMemo(() => {
+//     const base =
+//       (productdropdownList || []).map((p: any) => ({
+//         value: p.id,
+//         label: p.name,
+//       })) || [];
+
+//     const exists =
+//       selected && base.some((o) => o.value === (selected as any).product_id);
+
+//     if (!exists && selected) {
+//       // API example shows "products" field as product name
+//       const fallbackLabel =
+//         (selected as any).products || `#${(selected as any).product_id}`;
+//       base.unshift({
+//         value: (selected as any).product_id,
+//         label: fallbackLabel,
+//       });
+//     }
+//     return base;
+//   }, [productdropdownList, selected]);
+
+//   const errors = useMemo(() => {
+//     return {
+//       product_id: values.product_id ? "" : "Product is required",
+//       price: values.price ? "" : "Price is required",
+//     };
+//   }, [values]);
+
+//   const isValid = useMemo(
+//     () => Object.values(errors).every((e) => !e),
+//     [errors]
+//   );
+
+//   const handleSubmit = async () => {
+//     if (!isValid || !productPricing) return;
+
+//     const payload = {
+//       id: productPricing, // if your API expects price-id in params
+//       price: Number(values.price),
+//       currency: values.currency,
+//     };
+
+//     const res = await dispatch(updateProductPricing(payload));
+//     if (updateProductPricing.fulfilled.match(res)) {
+//       dispatch(getProductPricing({ offset: 0, limit: 10 }));
+//       toggle();
+//     } else {
+//       toast.error(
+//         (res.payload as any)?.message || "Failed to update product price",
+//         { autoClose: 3000 }
+//       );
+//     }
+//   };
+
+//   if (!productPricing) return null;
+
+//   const fetchbyidloading = detailState.loading;
+//   const updateloading = updateState.loading;
+
+//   return (
+//     <BaseModal
+//       isOpen={isOpen}
+//       toggle={toggle}
+//       title="Update Product Pricing"
+//       submitLabel={updateloading ? "Updating..." : "Update"}
+//       cancelLabel="Cancel"
+//       size="md"
+//       onSubmit={handleSubmit}
+//       isSubmitDisabled={!isValid || updateloading || fetchbyidloading}
+//     >
+//       {fetchbyidloading ? (
+//         // use your dynamic skeleton here
+//         <CategorySkeletonRow type="form" rows={2} columns={1} />
+//       ) : (
+//         <ProductPricing
+//           values={values}
+//           errors={errors}
+//           onChange={setValues}
+//           productOptions={productOptions}
+//           // usually price record update doesn't change product, so disable
+//           disableProductSelect
+//         />
+//       )}
+//     </BaseModal>
+//   );
+// };
+
+// export default UpdateProductPricingModal;
+
+
+
+
+
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import BaseModal from "../../basemodal/BaseModal";
-import AddProductPricingForm from "../../../../pages/Admin/productManagement/productPricingmodalform/AddProductPricing";
+import ProductPricing from "../../../../pages/Admin/productManagement/productPricingmodalform/AddProductPricing";
 import {
   updateProductPricing,
   getProductPricing,
+  getProductPricingById,
 } from "../../../../slices/productPricing/thunk";
+import { getProducts } from "../../../../slices/addProduct/thunk";
 import { RootState, AppDispatch } from "../../../../Store";
+import CategorySkeletonRow from "../../../Common/CategorySkeletonRow";
 import { toast } from "react-toastify";
-
-interface FormDataType {
-  product_id?: string | number;
-  price: number | string;
-  currency: string;
-}
 
 interface UpdateProductPricingModalProps {
   isOpen: boolean;
   toggle: () => void;
-  productPricing?: FormDataType & { id?: string | number };
+  productPricing?: number;
 }
 
 const UpdateProductPricingModal: React.FC<UpdateProductPricingModalProps> = ({
@@ -27,59 +177,108 @@ const UpdateProductPricingModal: React.FC<UpdateProductPricingModalProps> = ({
   productPricing,
 }) => {
   const dispatch: AppDispatch = useDispatch();
-  const [isValid, setIsValid] = useState(false);
-  const [formData, setFormData] = useState<FormDataType>({
-    product_id: undefined,
-    price: 0,
+
+  const { selected, detailState, updateState } = useSelector(
+    (s: RootState) => s.ProductPrice
+  );
+  const { productdropdownList, fetchState, hasMore } = useSelector(
+    (s: RootState) => s.AddProduct
+  );
+
+  // local state controlled by parent (this modal)
+  const [values, setValues] = useState({
+    product_id: "" as number | string | "",
+    price: "",
     currency: "INR",
   });
 
-  const loading = useSelector(
-    (state: RootState) => state.ProductPrice.updateState.loading
+  const [offset, setOffset] = useState(0);
+
+  // fetch pricing by id + products dropdown when opened
+  useEffect(() => {
+    if (isOpen && productPricing) {
+      dispatch(getProductPricingById(productPricing));
+      dispatch(getProducts({ offset: 0, limit: 10, context: "dropdown" }));
+    }
+  }, [isOpen, productPricing, dispatch]);
+
+  // when selected is loaded, prefill
+  useEffect(() => {
+    if (selected && isOpen) {
+      setValues({
+        product_id: (selected as any).product_id ?? "",
+        price: String((selected as any).price ?? ""),
+        currency: (selected as any).currency ?? "INR",
+      });
+    }
+  }, [selected, isOpen]);
+
+  const errors = useMemo(() => {
+    return {
+      product_id: values.product_id ? "" : "Product is required",
+      price: values.price ? "" : "Price is required",
+    };
+  }, [values]);
+
+  const isValid = useMemo(
+    () => Object.values(errors).every((e) => !e),
+    [errors]
   );
 
-  // ✅ Prefill form whenever productPricing changes
-  useEffect(() => {
-    if (productPricing) {
-      setFormData({
-        product_id: productPricing.product_id,
-        price: productPricing.price,
-        currency: productPricing.currency,
+  // build product options; ensure selected product is present
+  const productOptions = useMemo(() => {
+    const base =
+      (productdropdownList || []).map((p: any) => ({
+        value: p.id,
+        label: p.name,
+      })) || [];
+
+    const exists =
+      selected && base.some((o) => o.value === (selected as any).product_id);
+
+    if (!exists && selected) {
+      // API example shows "products" field as product name
+      const fallbackLabel =
+        (selected as any).products || `#${(selected as any).product_id}`;
+      base.unshift({
+        value: (selected as any).product_id,
+        label: fallbackLabel,
       });
-      setIsValid(true);
     }
-  }, [productPricing]);
+    return base;
+  }, [productdropdownList, selected]);
 
-  const handleFormChange = useCallback((valid: boolean, data: any) => {
-    setIsValid(valid);
-    setFormData(data);
-  }, []);
-
-  const handleSubmit = async () => {
-    if (!isValid || !productPricing?.id) return;
-
-    // ✅ Build payload matching thunk
-    const payload = {
-      id: productPricing.id,
-      price: Number(formData.price), // normalize to number
-      currency: formData.currency,
-    };
-
-    const resultAction = await dispatch(updateProductPricing(payload));
-
-    if (updateProductPricing.fulfilled.match(resultAction)) {
+  // Infinite scroll handler
+  const handleLoadMore = useCallback(() => {
+    if (!fetchState.loading && hasMore) {
+      const newOffset = offset + 1;
+      setOffset(newOffset);
       dispatch(
-        getProductPricing({
-          offset: 0,
+        getProducts({
+          offset: newOffset,
           limit: 10,
-          searchValue: "",
+          context: "dropdown",
         })
       );
+    }
+  }, [dispatch, offset, fetchState.loading, hasMore]);
+
+  const handleSubmit = async () => {
+    if (!isValid || !productPricing) return;
+
+    const payload = {
+      id: productPricing, // if your API expects price-id in params
+      price: Number(values.price),
+      currency: values.currency,
+    };
+
+    const res = await dispatch(updateProductPricing(payload));
+    if (updateProductPricing.fulfilled.match(res)) {
+      dispatch(getProductPricing({ offset: 0, limit: 10 }));
       toggle();
     } else {
       toast.error(
-        (resultAction.payload as any)?.message ||
-          "Failed to update product price",
+        (res.payload as any)?.message || "Failed to update product price",
         { autoClose: 3000 }
       );
     }
@@ -87,21 +286,37 @@ const UpdateProductPricingModal: React.FC<UpdateProductPricingModalProps> = ({
 
   if (!productPricing) return null;
 
+  const fetchbyidloading = detailState.loading;
+  const updateloading = updateState.loading;
+
   return (
     <BaseModal
       isOpen={isOpen}
       toggle={toggle}
       title="Update Product Pricing"
-      submitLabel={loading ? "Updating..." : "Update"}
+      submitLabel={updateloading ? "Updating..." : "Update"}
       cancelLabel="Cancel"
       size="md"
       onSubmit={handleSubmit}
-      isSubmitDisabled={!isValid || loading}
+      isSubmitDisabled={!isValid || updateloading || fetchbyidloading}
     >
-      <AddProductPricingForm
-        initialData={formData}
-        onChange={handleFormChange}
-      />
+      {fetchbyidloading ? (
+        // use your dynamic skeleton here
+        <CategorySkeletonRow type="form" rows={2} columns={1} />
+      ) : (
+        <ProductPricing
+          values={values}
+          errors={errors}
+          onChange={setValues}
+          productprice={{
+            options: productOptions || [],
+            loadMore: handleLoadMore,
+            hasMore,
+            loading: fetchState.loading,
+          }}
+          disableProductSelect
+        />
+      )}
     </BaseModal>
   );
 };

@@ -1,6 +1,13 @@
 // src/store/product/ProductSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getProducts, addProduct, updateProduct, deleteProduct } from "./thunk";
+import {
+  getProducts,
+  getProductById,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+  productStatusChange,
+} from "./thunk";
 
 export interface Product {
   id: number | string;
@@ -20,6 +27,8 @@ export interface ProductResponse {
   data: Product[];
   recordsTotal: number;
   recordsFiltered: number;
+  offset: number;
+  context: string;
 }
 
 interface RequestState {
@@ -28,14 +37,23 @@ interface RequestState {
   error: string | null;
 }
 
+interface StatusRequestState extends RequestState {
+  id?: number | string | null;
+}
+
 interface ProductState {
-  list: Product[];
+  tableList: Product[];
+  productdropdownList: Product[];
+  selected: Product | null;
   recordsTotal: number;
   recordsFiltered: number;
   fetchState: RequestState;
+  detailState: RequestState;
   addState: RequestState;
   updateState: RequestState;
   deleteState: RequestState;
+  statusState: StatusRequestState; // ✅ use extended type
+  hasMore: boolean;
 }
 
 const initialRequestState: RequestState = {
@@ -45,13 +63,18 @@ const initialRequestState: RequestState = {
 };
 
 const initialState: ProductState = {
-  list: [],
+  tableList: [],
+  selected: null, // ✅ initialize
+  productdropdownList: [],
   recordsTotal: 0,
   recordsFiltered: 0,
   fetchState: { ...initialRequestState },
+  detailState: { ...initialRequestState }, // ✅ added
   addState: { ...initialRequestState },
   updateState: { ...initialRequestState },
   deleteState: { ...initialRequestState },
+  statusState: { ...initialRequestState, id: null },
+  hasMore: true,
 };
 
 const ProductSlice = createSlice({
@@ -70,6 +93,14 @@ const ProductSlice = createSlice({
     resetFetchState: (state) => {
       state.fetchState = { ...initialRequestState };
     },
+    resetStatusState: (state) => {
+      // ✅ new
+      state.statusState = { ...initialRequestState };
+    },
+    resetSelected: (state) => {
+      // ✅ for clearing single record
+      state.selected = null;
+    },
   },
   extraReducers: (builder) => {
     // Fetch Products
@@ -83,9 +114,30 @@ const ProductSlice = createSlice({
         (state, action: PayloadAction<ProductResponse>) => {
           state.fetchState.loading = false;
           state.fetchState.success = true;
-          state.list = action.payload.data;
-          state.recordsTotal = action.payload.recordsTotal;
-          state.recordsFiltered = action.payload.recordsFiltered;
+          const { data, recordsTotal, recordsFiltered, offset, context } =
+            action.payload;
+
+          if (context === "table") {
+            // Table listing → overwrite (normal pagination)
+            state.tableList = data;
+            state.recordsTotal = recordsTotal;
+            state.recordsFiltered = recordsFiltered;
+          }
+
+          if (context === "dropdown") {
+            // Dropdown infinite scroll → append
+            if (offset === 0) {
+              state.productdropdownList = data;
+            } else {
+              state.productdropdownList = [
+                ...state.productdropdownList,
+                ...data,
+              ];
+            }
+
+            // If fewer than requested → no more data
+            state.hasMore = data.length >= 10;
+          }
         }
       )
       .addCase(getProducts.rejected, (state, action) => {
@@ -94,6 +146,28 @@ const ProductSlice = createSlice({
           (action.payload as string) ||
           action.error.message ||
           "Failed to fetch products";
+      });
+
+    // Fetch by ID
+    builder
+      .addCase(getProductById.pending, (state) => {
+        state.detailState.loading = true;
+        state.detailState.error = null;
+      })
+      .addCase(
+        getProductById.fulfilled,
+        (state, action: PayloadAction<Product>) => {
+          state.detailState.loading = false;
+          state.detailState.success = true;
+          state.selected = action.payload; // ✅ store single record
+        }
+      )
+      .addCase(getProductById.rejected, (state, action) => {
+        state.detailState.loading = false;
+        state.detailState.error =
+          (action.payload as string) ||
+          action.error.message ||
+          "Failed to fetch product by id";
       });
 
     // Add Product
@@ -126,9 +200,11 @@ const ProductSlice = createSlice({
         (state, action: PayloadAction<Product>) => {
           state.updateState.loading = false;
           state.updateState.success = true;
-          const index = state.list.findIndex((p) => p.id === action.payload.id);
+          const index = state.tableList.findIndex(
+            (p) => p.id === action.payload.id
+          );
           if (index !== -1) {
-            state.list[index] = action.payload;
+            state.tableList[index] = action.payload;
           }
         }
       )
@@ -139,33 +215,6 @@ const ProductSlice = createSlice({
           action.error.message ||
           "Failed to update product";
       });
-
-// builder
-//   .addCase(updateProduct.pending, (state) => {
-//     state.updateState.loading = true;
-//     state.updateState.error = null;
-//     state.updateState.success = false; // reset success
-//   })
-//   .addCase(updateProduct.fulfilled, (state, action) => {
-//     state.updateState.loading = false;
-//     state.updateState.success = true;
-
-//     const updatedProduct = action.payload; // must be Product
-//     const index = state.list.findIndex((p) => p.id === updatedProduct.id);
-
-//     if (index !== -1) {
-//       state.list[index] = updatedProduct;
-//     }
-//   })
-//   .addCase(updateProduct.rejected, (state, action) => {
-//     state.updateState.loading = false;
-//     state.updateState.error =
-//       (action.payload as string) ||
-//       action.error.message ||
-//       "Failed to update product";
-//   });
-
-
 
     // Delete Product
     builder
@@ -178,9 +227,10 @@ const ProductSlice = createSlice({
         (state, action: PayloadAction<number | string>) => {
           state.deleteState.loading = false;
           state.deleteState.success = true;
-          // state.list = state.list.filter((p) => p.id !== action.payload);
-            state.list = state.list.filter(
-            (item) => item.id !== action.meta.arg);
+
+          state.tableList = state.tableList.filter(
+            (item) => item.id !== action.meta.arg
+          );
 
           state.recordsTotal = Math.max(state.recordsTotal - 1, 0);
           state.recordsFiltered = Math.max(state.recordsFiltered - 1, 0);
@@ -193,6 +243,40 @@ const ProductSlice = createSlice({
           action.error.message ||
           "Failed to delete product";
       });
+
+    // ---------------- Change Status ----------------
+    builder
+      .addCase(productStatusChange.pending, (state, action) => {
+        const { id, currentStatus } = action.meta.arg;
+        const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
+
+        // Optimistic UI update
+        const index = state.tableList.findIndex((cat) => cat.id === id);
+        if (index !== -1) {
+          state.tableList[index].status = newStatus;
+        }
+
+        state.statusState.loading = true;
+        state.statusState.id = id;
+      })
+      .addCase(productStatusChange.fulfilled, (state, action) => {
+        state.statusState.loading = false;
+        state.statusState.success = true;
+        state.statusState.id = null;
+      })
+      .addCase(productStatusChange.rejected, (state, action) => {
+        state.statusState.loading = false;
+        state.statusState.success = false;
+        state.statusState.error = action.payload || "Failed to update";
+        state.statusState.id = null;
+
+        // 🔄 rollback status if API failed
+        const { id, currentStatus } = action.meta.arg;
+        const index = state.tableList.findIndex((cat) => cat.id === id);
+        if (index !== -1) {
+          state.tableList[index].status = currentStatus; // revert
+        }
+      });
   },
 });
 
@@ -201,6 +285,8 @@ export const {
   resetUpdateState,
   resetDeleteState,
   resetFetchState,
+  resetStatusState,
+  resetSelected, // ✅ export new reset
 } = ProductSlice.actions;
 
 export default ProductSlice.reducer;

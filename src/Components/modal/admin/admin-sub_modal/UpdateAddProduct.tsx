@@ -1,115 +1,161 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import BaseModal from "../../basemodal/BaseModal";
 import AddProductForm from "../../../../pages/Admin/productManagement/addProductmodalform/AddProduct";
-import { updateProduct, getProducts } from "../../../../slices/addProduct/thunk";
+import {
+  updateProduct,
+  getProducts,
+  getProductById,
+} from "../../../../slices/addProduct/thunk";
+import { getProductCategories } from "../../../../slices/productCategory/thunk";
 import { RootState, AppDispatch } from "../../../../Store";
+import CategorySkeletonRow from "../../../Common/CategorySkeletonRow";
 import { toast } from "react-toastify";
-
-interface Product {
-  id: string | number;
-  category_id: string;
-  name: string;
-  description: string;
-  icon: string;
-  status: string;
-}
 
 interface UpdateProductModalProps {
   isOpen: boolean;
   toggle: () => void;
-  product?: Product;
+  category?: number | string;
 }
 
 const UpdateProductModal: React.FC<UpdateProductModalProps> = ({
   isOpen,
   toggle,
-  product,
+  category,
 }) => {
   const dispatch: AppDispatch = useDispatch();
-  const [isValid, setIsValid] = useState(false);
-  const [formValues, setFormValues] = useState<any>(null); // plain object, not FormData
 
-  const loading = useSelector(
-    (state: RootState) => state.AddProduct.updateState.loading
+  const { selected, detailState, updateState } = useSelector(
+    (s: RootState) => s.AddProduct
+  );
+  const { dropdownList, fetchState, hasMore } = useSelector(
+    (s: RootState) => s.ProductCategory
   );
 
-  // ✅ Prefill form when product changes
+  const [values, setValues] = useState({
+    category_id: null as number | null,
+    name: "",
+    description: "",
+    icon: null as File | string | null,
+    status: "Active",
+  });
+
+  const [offset, setOffset] = useState(0);
+
+  // Load product details + first batch of categories
   useEffect(() => {
-    if (product) {
-      setFormValues({
-        category_id: product.category_id,
-        name: product.name,
-        description: product.description,
-        icon: product.icon,
-        status: product.status,
+    if (isOpen && category) {
+      dispatch(getProductById(category));
+      setOffset(0);
+      dispatch(
+        getProductCategories({ offset: 0, limit: 10, context: "dropdown" })
+      );
+    }
+  }, [isOpen, category, dispatch]);
+  
+  useEffect(() => {
+    if (selected && isOpen) {
+      setValues({
+        category_id: Number(selected.category_id) || null,
+        name: selected.name || "",
+        description: selected.description || "",
+        icon: selected.icon || null,
+        status: selected.status || "Active",
       });
     }
-  }, [product]);
+  }, [selected, isOpen]);
 
-useEffect(() => {
-  if (!isOpen) {
-    setIsValid(false);
-    setFormValues(null);
-  }
-}, [isOpen]);
+  const errors = useMemo(() => {
+    return {
+      category_id: values.category_id ? "" : "Category is required",
+      name: values.name ? "" : "Name is required",
+      description: values.description ? "" : "Description is required",
+      status: values.status ? "" : "Status is required",
+    };
+  }, [values]);
 
-  // ✅ Called whenever form changes
-  const handleFormChange = useCallback((valid: boolean, data: any) => {
-    setIsValid(valid);
-    setFormValues(data);
-  }, []);
+  const isValid = useMemo(
+    () => Object.values(errors).every((e) => !e),
+    [errors]
+  );
 
-  if (!product) return null;
+  // Infinite scroll handler
+  const handleLoadMore = useCallback(() => {
+    if (!fetchState.loading && hasMore) {
+      const newOffset = offset + 1;
+      setOffset(newOffset);
+      dispatch(
+        getProductCategories({
+          offset: newOffset,
+          limit: 10,
+          context: "dropdown",
+        })
+      );
+    }
+  }, [dispatch, offset, fetchState.loading, hasMore]);
 
-const handleSubmit = async () => {
-  if (!isValid || !product || !formValues) return;
+  const handleSubmit = async () => {
+    if (!isValid || !category) return;
 
-  const fd = new FormData();
-  fd.append("category_id", String(formValues.category_id));
-  fd.append("name", formValues.name);
-  fd.append("description", formValues.description);
-  fd.append("status", formValues.status);
+    const fd = new FormData();
+    fd.append("category_id", String(values.category_id));
+    fd.append("name", values.name);
+    fd.append("description", values.description);
+    fd.append("status", values.status);
 
-  if (formValues.icon instanceof File) {
-    fd.append("icon", formValues.icon); // new file
-  } else if (typeof formValues.icon === "string") {
-    fd.append("icon", formValues.icon); // existing icon path
-  }
-
-  console.log("------- FormData being sent -------");
-  for (let [key, value] of fd.entries()) {
-    console.log(`${key}:`, value);
-  }
+    if (values.icon instanceof File) {
+      fd.append("icon", values.icon); // new upload
+    } else if (typeof values.icon === "string") {
+      fd.append("icon", values.icon); // keep old value
+    }
 
     const resultAction = await dispatch(
-      updateProduct({ id: product.id, data: fd })
+      updateProduct({ id: category, data: fd })
     );
 
     if (updateProduct.fulfilled.match(resultAction)) {
-      dispatch(
-        getProducts({ offset: 0, limit: 10, searchValue: "", ProductStatus: "" })
-      );
+      dispatch(getProducts({ offset: 0, limit: 10, context: "table" }));
       toggle();
     } else {
       toast.error(
-        (resultAction.payload as any)?.message || "Failed to update product"
+        (resultAction.payload as any)?.message || "Failed to update product",
+        { autoClose: 3000 }
       );
     }
-};
+  };
+
+  if (!category) return null;
+
+  const fetchbyidloading = detailState.loading;
+  const updateloading = updateState.loading;
 
   return (
     <BaseModal
       isOpen={isOpen}
       toggle={toggle}
       title="Update Product"
-      submitLabel={loading ? "Updating..." : "Update"}
+      submitLabel={updateloading ? "Updating..." : "Update"}
       cancelLabel="Cancel"
       size="md"
       onSubmit={handleSubmit}
-      isSubmitDisabled={!isValid || loading}
+      isSubmitDisabled={!isValid || updateloading || fetchbyidloading}
     >
-      <AddProductForm initialData={product} onChange={handleFormChange} />
+      {fetchbyidloading ? (
+        <CategorySkeletonRow type="form" rows={5} columns={1} />
+      ) : (
+        <AddProductForm
+          values={values}
+          errors={errors}
+          onChange={setValues}
+          categories={{
+          options: dropdownList || [],
+          loadMore: handleLoadMore,
+          hasMore,
+          loading: fetchState.loading,
+          }}
+          disableProductSelect
+        />
+      )}
     </BaseModal>
   );
 };

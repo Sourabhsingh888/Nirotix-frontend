@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useMemo, useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import BaseModal from "../../basemodal/BaseModal";
 import AddCategoryForm from "../../../../pages/Admin/productManagement/productCategorymodalform/ProductCategory";
@@ -19,11 +19,21 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
   toggle,
 }) => {
   const dispatch: AppDispatch = useDispatch<any>();
-  const [isValid, setIsValid] = useState(false);
-  const [formData, setFormData] = useState({ name: "", status: "" });
+  const [formData, setFormData] = useState({ name: "", status: "Active" });
 
   const loading = useSelector(
     (state: RootState) => state.ProductCategory.addState.loading
+  );
+
+  const errors = useMemo(() => {
+    return {
+      name: formData.name ? "" : "Name is required",
+    };
+  }, [formData]);
+
+  const isValid = useMemo(
+    () => Object.values(errors).every((e) => !e),
+    [errors]
   );
 
   const handleSubmit = async () => {
@@ -32,11 +42,9 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
     const resultAction = await dispatch(addProductCategory(formData));
     if (addProductCategory.fulfilled.match(resultAction)) {
       dispatch(
-        getProductCategories({
-          offset: 0,
-          limit: 10,
-        })
+        getProductCategories({ offset: 0, limit: 10, context: "table" })
       );
+      setFormData({ name: "", status : "Active" });
       toggle();
     } else {
       toast.error(resultAction.payload?.message || "Failed to add category", {
@@ -44,11 +52,6 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
       });
     }
   };
-
-  const handleFormChange = useCallback((valid: boolean, data: any) => {
-    setIsValid(valid);
-    setFormData(data);
-  }, []);
 
   return (
     <BaseModal
@@ -61,61 +64,13 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
       onSubmit={handleSubmit}
       isSubmitDisabled={!isValid || loading}
     >
-      <AddCategoryForm onChange={handleFormChange} />
+      <AddCategoryForm
+        values={formData}
+        errors={errors}
+        onChange={setFormData}
+      />
     </BaseModal>
   );
 };
 
 export default AddCategoryModal;
-
-// import React, { useState } from "react";
-// import BaseModal from "../../basemodal/BaseModal";
-// import AddCategoryForm from "../../../../pages/Admin/productManagement/productCategorymodalform/ProductCategory";
-// import { toast} from "react-toastify";
-
-// interface AddCategoryModalProps {
-//   isOpen: boolean;
-//   toggle: () => void;
-// }
-
-// const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
-//   isOpen,
-//   toggle,
-// }) => {
-//   const [isValid, setIsValid] = useState(false);
-//   const [formData, setFormData] = useState({});
-
-//   const handleSubmit = () => {
-//     if (!isValid) return;
-
-//     toast.success("Category submitted!", {
-//       position: "top-right",
-//       autoClose: 3000,
-//     });
-//     toggle();
-//   };
-
-//   const handleFormChange = (valid: boolean, data: any) => {
-//     setIsValid(valid);
-//     setFormData(data);
-//   };
-
-//   return (
-//     <>
-//       <BaseModal
-//         isOpen={isOpen}
-//         toggle={toggle}
-//         title="Add Product Category"
-//         submitLabel="Submit"
-//         cancelLabel="Cancel"
-//         size="md"
-//         onSubmit={handleSubmit}
-//         isSubmitDisabled={!isValid}
-//       >
-//         <AddCategoryForm onChange={handleFormChange} />
-//       </BaseModal>
-//     </>
-//   );
-// };
-
-// export default AddCategoryModal;

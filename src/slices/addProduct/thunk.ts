@@ -4,10 +4,12 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import {
-  getProductList as getProductListApi,
   addProductList as addProductApi,
+  getProductList as getProductListApi,
+  getProductByid as getProductByidApi,
   updateProductList as updateProductApi,
   deleteProductList as deleteProductApi,
+  productStatusChange as productStatusChangeApi,
 } from "../../helpers/auth_api_helper";
 
 // ---- GET ALL ----
@@ -17,6 +19,7 @@ export const getProducts = createAsyncThunk(
     {
       offset = 0,
       limit = 10,
+      context,
       searchValue = "",
       ProductStatus = "",
       categoryId = "",  // 👈 added
@@ -24,6 +27,7 @@ export const getProducts = createAsyncThunk(
     }: {
       offset?: number;
       limit?: number;
+      context: "table" | "dropdown";
       searchValue?: string;
       ProductStatus?: string;
       categoryId?: string;
@@ -31,7 +35,9 @@ export const getProducts = createAsyncThunk(
     },
     { rejectWithValue }
   ) => {
+    
     try {
+      
       const response = await getProductListApi(
         offset,
         limit,
@@ -44,6 +50,8 @@ export const getProducts = createAsyncThunk(
         data: response.data,
         recordsTotal: response.recordsTotal,
         recordsFiltered: response.recordsFiltered,
+        offset,
+        context,
       };
     } catch (error: any) {
       toast.error("Failed to load products");
@@ -51,6 +59,23 @@ export const getProducts = createAsyncThunk(
     }
   }
 );
+
+// ---- GET ById ----
+export const getProductById = createAsyncThunk(
+  "product/getById",
+  async (id: number | string, { rejectWithValue }) => {
+    try {
+      const response = await getProductByidApi(id);
+      console.log(response);
+      return response.data;
+
+    } catch (error: any) {
+      toast.error("Failed to load product", { autoClose: 3000 });
+      return rejectWithValue(error?.response?.data || error.message);
+    }
+  }
+);
+
 
 // ---- ADD ----
 export const addProduct = createAsyncThunk(
@@ -109,6 +134,33 @@ export const deleteProduct = createAsyncThunk(
         autoClose: 3000,
       });
       return rejectWithValue(error || "Failed to delete product");
+    }
+  }
+);
+
+
+// ---- STATUS CHANGE ----
+export const productStatusChange = createAsyncThunk(
+  "product/statusChange",
+  async ({ id, currentStatus }, { rejectWithValue }) => {
+    try {
+      const response = await productStatusChangeApi(id);
+      toast.success(response.message || "Status updated successfully", {
+        autoClose: 3000,
+      });
+      if (response.success) {
+        // backend doesn’t send new status, so we toggle locally
+        const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
+        return { id, newStatus };
+      } else {
+        return rejectWithValue("Failed to change status");
+      }
+    } catch (error: any) {
+      console.error("Status Change Error:", error?.message);
+      toast.error(error?.message || "Failed to update status", {
+        autoClose: 3000,
+      });
+      return rejectWithValue(error?.message || "Failed to update status");
     }
   }
 );

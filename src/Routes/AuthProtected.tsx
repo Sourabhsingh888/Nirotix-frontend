@@ -1,6 +1,87 @@
+// import React, { useEffect, useState } from "react";
+// import { Navigate } from "react-router-dom";
+// import { useDispatch } from "react-redux";
+// import { setAuthorization } from "../helpers/api_helper";
+// import { logoutUser } from "../slices/auth/login/thunk";
+// import { jwtDecode } from "jwt-decode";
+// import Cookies from "js-cookie";
+// import { useProfile } from "../Components/Hooks/UserHooks";
+
+// interface AuthProtectedProps {
+//   children: React.ReactNode;
+//   allowedRoles?: string[];
+// }
+
+// // 🔎 Helper: check token expiry
+// const isTokenExpired = (token: string): boolean => {
+//   try {
+//     const decoded: any = jwtDecode(token);
+//     const currentTime = Math.floor(Date.now() / 1000);
+//     return decoded.exp < currentTime;
+//   } catch {
+//     return true;
+//   }
+// };
+
+// const AuthProtected: React.FC<AuthProtectedProps> = ({
+//   allowedRoles = [],
+//   children,
+// }) => {
+//   const dispatch = useDispatch<any>();
+//   const { userProfile, loading, token } = useProfile();
+//   const [role, setRole] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     let detectedRole: string | null = null;
+
+//     try {
+//       const storedAuth = sessionStorage.getItem("authUser");
+//       if (storedAuth) {
+//         const parsed = JSON.parse(storedAuth);
+//         detectedRole = parsed?.user?.role || parsed?.role || null;
+//       }
+//     } catch (err) {
+//       console.error("Error parsing authUser from sessionStorage", err);
+//     }
+
+//     if (token && !isTokenExpired(token) && userProfile) {
+//       setAuthorization(token);
+//       setRole(detectedRole);
+//     } else {
+//       // 🔴 Invalid or missing token → cleanup + logout
+//       Cookies.remove("token");
+//       sessionStorage.removeItem("authUser");
+//       dispatch(logoutUser());
+//     }
+//   }, [dispatch, token, userProfile]);
+
+//   // ⏳ Still loading profile/token
+//   if (loading) {
+//     return null;
+//   }
+
+//   // ⛔ Redirect if no token or expired
+//   if (!token || isTokenExpired(token)) {
+//     return <Navigate to="/login" replace />;
+//   }
+
+//   // 🔒 Role check
+//   if (allowedRoles.length > 0 && (!role || !allowedRoles.includes(role))) {
+//     return <Navigate to="/unauthorized" replace />;
+//   }
+
+//   // ✅ Authenticated + authorized
+//   return <>{children}</>;
+// };
+
+// export default AuthProtected;
+
+
+
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useProfile } from "../Components/Hooks/UserHooks";
 import { setAuthorization } from "../helpers/api_helper";
 import { logoutUser } from "../slices/auth/login/thunk";
 import { jwtDecode } from "jwt-decode";
@@ -75,8 +156,6 @@ const AuthProtected: React.FC<AuthProtectedProps> = ({
 };
 
 export default AuthProtected;
-
-
 
 // import React, { useEffect, useState } from "react";
 // import { Navigate } from "react-router-dom";

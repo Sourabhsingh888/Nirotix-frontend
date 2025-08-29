@@ -162,16 +162,281 @@ const roleFallbackRoutes = (role: string) => {
 
 // ============================== Admin related Routes  ===============================
 
+  //Dashboard Route
+const adminRoutes = [
+  { path: "/admin-dashboard", component: <DashboardPage /> },
+
+  // Management section
+
+  //Product Management Route
+  {
+    path: "/product-management/category",
+    component: <ProductCategoryPage />,
+  },
+  {
+    path: "/product-management/products",
+    component: <ProductsPage />,
+  },
+  {
+    path: "/product-management/product-pricing",
+    component: <ProductPricingPage />,
+  },
+
+  // User Management Route
+  {
+    path: "/user-management/user-list",
+    component: <UserListPage />,
+  },
+
+  //Setting Management Route
+  {
+    path: "/setting-management/add-apis",
+    component: <AddAPIsPage />,
+  },
+  {
+    path: "/setting-management/service-switching",
+    component: <ServiceSwitichingPage />,
+  },
+
+  //Account Management Route
+  {
+    path: "/account-management/wallet",
+    component: <WalletTransferPage />,
+  },
+
+  // MSG section
+
+  //MSG Management Route
+  {
+    path: "/msg-management/add-msg",
+    component: <AddMessagePage />,
+  },
+  {
+    path: "/msg-management/send-msg",
+    component: <SendMessagePage />,
+  },
+  {
+    path: "/msg-management/msg-signature",
+    component: <MessageSignaturePage />,
+  },
+  {
+    path: "/msg-management/msg-contents",
+    component: <MessageContentsPage />,
+  },
+  {
+    path: "/msg-management/msg-logs",
+    component: <MessageLogsPage />,
+  },
+
+];
+
+  // ============================== User related Routes  ===============================
+
+  //Dashboard Route
+const userRoutes = [
+  {
+    path: "/user-dashboard",
+    component: <UserDashboardPage />,
+  },
+
+  // ============================== Services ===============================
+
+  // AadharPan
+  {
+    path: "/services/aadhaar-okyc",
+    component: <AadharOKYC />,
+  },
+  {
+    path: "/services/pan",
+    component: <Pan />,
+  },
+
+  // Bank Account
+  {
+    path: "/services/penny-drop",
+    component: <PennyDrop />,
+  },
+
+  // Digital kyc
+  {
+    path: "/services/face-match",
+    component: <FaceMatch />,
+  },
+  {
+    path: "/services/liveliness-check",
+    component: <LivelinessCheck />,
+  },
+  {
+    path: "/services/name-match",
+    component: <NameMatch />,
+  },
+  {
+    path: "/services/reverse-geocoding",
+    component: <ReverseGeocoading />,
+  },
+
+  // Kyb(know you business)
+  {
+    path: "/services/cin-mca-lookup",
+    component: <CinMcaLookup />,
+  },
+  { path: "/services/kyb/gstin", component: <Gstin /> },
+  {
+    path: "/services/pan-gstin",
+    component: <PanToGistin />,
+  },
+
+  // Other Offical docs
+  {
+    path: "/services/driving-license",
+    component: <DrivingLicense />,
+  },
+  {
+    path: "/services/employment-360",
+    component: <Employment360 />,
+  },
+  {
+    path: "/services/mobile-360",
+    component: <Mobile360 />,
+  },
+  {
+    path: "/services/passport",
+    component: <Passport />,
+  },
+  {
+    path: "/services/vehicle-rc",
+    component: <VehicleRc />,
+  },
+  {
+    path: "/services/voter-id",
+    component: <VoterID />,
+  },
+
+  // Telecome Intelligence
+  {
+    path: "/services/dth-customer-info",
+    component: <DTHCustomerInfo />,
+  },
+  {
+    path: "/services/dth-tariff-plans",
+    component: <DTHTariffPlans />,
+  },
+  {
+    path: "/services/number-lookup",
+    component: <NumberLookup />,
+  },
+  {
+    path: "/services/prepaid-tariff-plans",
+    component: <PrepaidTariffPlans />,
+  },
+  {
+    path: "/services/special-offer-check",
+    component: <SpecialOffercheck />,
+  },
+
+  // Utility Bill Intelligence
+  {
+    path: "/services/broadband-postpaid",
+    component: <BroadbandPostpaid />,
+  },
+  {
+    path: "/services/cable-tv",
+    component: <CableTV />,
+  },
+  {
+    path: "/services/club-associations",
+    component: <ClubsAssociations />,
+  },
+  {
+    path: "/services/credit-card",
+    component: <CreditCard />,
+  },
+  {
+    path: "/services/donation",
+    component: <Donation />,
+  },
+  {
+    path: "/services/electricity",
+    component: <Electricity />,
+  },
+  {
+    path: "/services/fastag",
+    component: <FASTag />,
+  },
+  { path: "/services/gas", component: <Gas />,},
+  {
+    path: "/services/hospital-pathology",
+    component: <HospitalPathology />,
+  },
+  {
+    path: "/services/housing-society",
+    component: <HousingSociety />,
+  },
+  {
+    path: "/services/insurance",
+    component: <Insurance />,
+  },
+  {
+    path: "/services/landline-postpaid",
+    component: <LandlinePostpaid />,
+  },
+  {
+    path: "/services/loan-repayment",
+    component: <LoanRepayment />,
+  },
+  {
+    path: "/services/lpg-gas",
+    component: <LPGGas />,
+  },
+  {
+    path: "/services/municipal-services",
+    component: <MunicipalServices />,
+  },
+  {
+    path: "/services/postpaid",
+    component: <Postpaid />,
+  },
+  {
+    path: "/services/rental",
+    component: <Rental />,
+  },
+  {
+    path: "/services/subscription",
+    component: <Subscription />,
+  },
+  {
+    path: "/services/water",
+    component: <Water />,
+  },
+
+  // ============================== Account ===============================
+
+  // My account
+  {
+    path: "/account/myaccount/payment-report",
+    component: <PaymentReport />,
+  },
+  {
+    path: "/account/myaccount/statement",
+    component: <Statement />,
+  },
+
+  // Developer api
+  {
+    path: "/account/developer/token-ip",
+    component: <TokenAndIP />,
+  },
+];
+
+
+
+
 const authProtectedRoutes = [
   // 🔹 Append role-specific fallback
   ...roleFallbackRoutes(role),
 
-  //Dashboard Route
-  {
-    path: "/admin-dashboard",
-    component: <DashboardPage />,
-    allowedRoles: ["admin"],
-  },
+  ...adminRoutes.map((r) => ({ ...r, allowedRoles: ["admin"] })),
+  ...userRoutes.map((r) => ({ ...r, allowedRoles: ["user"] })),
 
   // Unauthorized
   {
@@ -187,327 +452,15 @@ const authProtectedRoutes = [
   //   allowedRoles: ["admin", "user"], // fallback for both
   // },
 
-  // Management section
-
-  //Product Management Route
-  {
-    path: "/product-management/category",
-    component: <ProductCategoryPage />,
-    allowedRoles: ["admin"],
-  },
-  {
-    path: "/product-management/products",
-    component: <ProductsPage />,
-    allowedRoles: ["admin"],
-  },
-  {
-    path: "/product-management/product-pricing",
-    component: <ProductPricingPage />,
-    allowedRoles: ["admin"],
-  },
-
-  //User Management Route
-  {
-    path: "/user-management/user-list",
-    component: <UserListPage />,
-    allowedRoles: ["admin"],
-  },
-
-  //Setting Management Route
-  {
-    path: "/setting-management/add-apis",
-    component: <AddAPIsPage />,
-    allowedRoles: ["admin"],
-  },
-  {
-    path: "/setting-management/service-switching",
-    component: <ServiceSwitichingPage />,
-    allowedRoles: ["admin"],
-  },
-
-  //Account Management Route
-  {
-    path: "/account-management/wallet",
-    component: <WalletTransferPage />,
-    allowedRoles: ["admin"],
-  },
-
-  // MSG section
-
-  //MSG Management Route
-  {
-    path: "/msg-management/add-msg",
-    component: <AddMessagePage />,
-    allowedRoles: ["admin"],
-  },
-  {
-    path: "/msg-management/send-msg",
-    component: <SendMessagePage />,
-    allowedRoles: ["admin"],
-  },
-  {
-    path: "/msg-management/msg-signature",
-    component: <MessageSignaturePage />,
-    allowedRoles: ["admin"],
-  },
-  {
-    path: "/msg-management/msg-contents",
-    component: <MessageContentsPage />,
-    allowedRoles: ["admin"],
-  },
-  {
-    path: "/msg-management/msg-logs",
-    component: <MessageLogsPage />,
-    allowedRoles: ["admin"],
-  },
-
-  // ============================== User related Routes  ===============================
-
-  //Dashboard Route
-  {
-    path: "/user-dashboard",
-    component: <UserDashboardPage />,
-    allowedRoles: ["user"],
-  },
-
-  // ============================== Services ===============================
-
-  // AadharPan
-  {
-    path: "/services/aadhaar-okyc",
-    component: <AadharOKYC />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/pan",
-    component: <Pan />,
-    allowedRoles: ["user"],
-  },
-
-  // Bank Account
-  {
-    path: "/services/penny-drop",
-    component: <PennyDrop />,
-    allowedRoles: ["user"],
-  },
-
-
-  
-
-
-  // Digital kyc
-  {
-    path: "/services/face-match",
-    component: <FaceMatch />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/liveliness-check",
-    component: <LivelinessCheck />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/name-match",
-    component: <NameMatch />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/reverse-geocoding",
-    component: <ReverseGeocoading />,
-    allowedRoles: ["user"],
-  },
-
-
-  // Kyb(know you business)
-  {
-    path: "/services/cin-mca-lookup",
-    component: <CinMcaLookup />,
-    allowedRoles: ["user"],
-  },
-  { path: "/services/gstin", 
-    component: <Gstin />, 
-    allowedRoles: ["user"] },
-
-  {
-    path: "/services/pan-gstin",
-    component: <PanToGistin />,
-    allowedRoles: ["user"],
-  },
-
-  // Other Offical docs
-  {
-    path: "/services/driving-license",
-    component: <DrivingLicense />,
-  },
-  {
-    path: "/services/employment-360",
-    component: <Employment360 />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/mobile-360",
-    component: <Mobile360 />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/passport",
-    component: <Passport />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/vehicle-rc",
-    component: <VehicleRc />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/voter-id",
-    component: <VoterID />,
-    allowedRoles: ["user"],
-  },
-
-  // Telecome Intelligence
-  {
-    path: "/services/dth-customer-info",
-    component: <DTHCustomerInfo />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/dth-tariff-plans",
-    component: <DTHTariffPlans />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/number-lookup",
-    component: <NumberLookup />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/prepaid-tariff-plans",
-    component: <PrepaidTariffPlans />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/special-offer-check",
-    component: <SpecialOffercheck />,
-    allowedRoles: ["user"],
-  },
-
-  // Utility Bill Intelligence
-  {
-    path: "/services/broadband-postpaid",
-    component: <BroadbandPostpaid />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/cable-tv",
-    component: <CableTV />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/club-associations",
-    component: <ClubsAssociations />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/credit-card",
-    component: <CreditCard />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/donation",
-    component: <Donation />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/electricity",
-    component: <Electricity />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/fastag",
-    component: <FASTag />,
-    allowedRoles: ["user"],
-  },
-  { path: "/services/gas", component: <Gas />, allowedRoles: ["user"] },
-  {
-    path: "/services/hospital-pathology",
-    component: <HospitalPathology />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/housing-society",
-    component: <HousingSociety />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/insurance",
-    component: <Insurance />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/landline-postpaid",
-    component: <LandlinePostpaid />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/loan-repayment",
-    component: <LoanRepayment />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/lpg-gas",
-    component: <LPGGas />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/municipal-services",
-    component: <MunicipalServices />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/postpaid",
-    component: <Postpaid />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/rental",
-    component: <Rental />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/subscription",
-    component: <Subscription />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/services/water",
-    component: <Water />,
-    allowedRoles: ["user"],
-  },
-
-  // ============================== Account ===============================
-
-  // My account
-  {
-    path: "/account/myaccount/payment-report",
-    component: <PaymentReport />,
-    allowedRoles: ["user"],
-  },
-  {
-    path: "/account/myaccount/statement",
-    component: <Statement />,
-    allowedRoles: ["user"],
-  },
-
-  // Developer api
-  {
-    path: "/account/developer/token-ip",
-    component: <TokenAndIP />,
-    allowedRoles: ["user"],
-  },
-
   // {
-  //   path: "/",
+  //   path: "*",
+  //   component: <RoleRedirect />,
+  //   allowedRoles: ["admin", "user"], // fallback for both
+  // },
+
+  //   p
+
+  // {ath: "/",
   //   exact: true,
   //   component: <Navigate to="/user-dashboard" />,
   // },
