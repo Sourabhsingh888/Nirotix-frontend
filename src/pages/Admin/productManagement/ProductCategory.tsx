@@ -7,9 +7,9 @@ import {
   CardBody,
   CardHeader,
   Button,
+  Badge,
   Input,
   Table,
-  Badge,
   Pagination,
   PaginationItem,
   PaginationLink,
@@ -20,11 +20,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../../Store";
 import Swal from "sweetalert2";
 import BreadCrumb from "../../../Components/Common/BreadCrumb";
+import CategorySkeletonRow from "../../../Components/Common/CategorySkeletonRow";
 import AddCategoryModal from "../../../Components/modal/admin/admin-sub_modal/AddProductCategoryModal";
 import UpdateCategoryModal from "../../../Components/modal/admin/admin-sub_modal/UpdateCategoryModal";
 import {
   getProductCategories,
   deleteProductCategory,
+  categoryStatusChange,
 } from "../../../slices/productCategory/thunk";
 
 const SelectOption = [
@@ -36,15 +38,14 @@ const SelectOption = [
 const ProductCategoryPage = () => {
   document.title = "Product Category";
   const dispatch = useDispatch<AppDispatch>();
-  const { list, fetchState, recordsTotal, recordsFiltered } = useSelector(
-    (state: RootState) => state.ProductCategory
-  );
+  const { tableList, fetchState, recordsTotal, recordsFiltered, statusState } =
+    useSelector((state: RootState) => state.ProductCategory);
 
+  console.log("tableList", tableList);
+  
   const [currentPage, setCurrentPage] = useState(1);
-  const [categoryStatus, setCategoryStatus] = useState<{
-    value: string;
-    label: string;
-  } | null>(null);
+
+  const [categoryStatus, setCategoryStatus] = useState<any | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -61,8 +62,9 @@ const ProductCategoryPage = () => {
       getProductCategories({
         offset: currentPage - 1,
         limit: itemsPerPage,
+        context: "table",
         searchValue: searchValue.trim(),
-        ProductCategoryStatus: categoryStatus?.value || "",
+        ProductCategoryStatus:categoryStatus
       })
     );
   }, [dispatch, categoryStatus, searchValue, currentPage]);
@@ -77,42 +79,45 @@ const ProductCategoryPage = () => {
     }
   };
 
-  // Add this function inside your component
   const handleDelete = (id: number | string) => {
     Swal.fire({
       title: "Are you sure?",
       text: "Once deleted, you will not be able to recover this data!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#20c997", // green
-      cancelButtonColor: "#f46a6a", // red
+      confirmButtonColor: "#20c997",
+      cancelButtonColor: "#f46a6a",
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "Cancel",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        dispatch(deleteProductCategory(id)).then(() => {
-          Swal.fire({
-            icon: "success",
-            title: "Deleted!",
-            text: "Category deleted successfully.",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-        });
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        Swal.fire({
-          icon: "info",
-          title: "Cancelled",
-          text: "Your data is safe!",
-          confirmButtonColor: "#20c997",
-        });
-      }
+      preConfirm: () => {
+        Swal.showLoading();
+        return dispatch(deleteProductCategory(id))
+          .unwrap()
+          .catch(() => {});
+      },
     });
   };
 
   const handleEdit = (category: any) => {
     setSelectedCategory(category);
     setIsUpdateModalOpen(true);
+  };
+
+  function formatToIST(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  }
+
+  const clearStatus = () => {
+    setCategoryStatus(null);
   };
 
   return (
@@ -150,6 +155,30 @@ const ProductCategoryPage = () => {
                 </Button>
               </Col>
             </Row>
+            <Row>
+              {/* ✅ Show single badge if status selected */}
+              {categoryStatus && (
+                <div className="mt-2 d-flex flex-wrap gap-2">
+                  <Badge
+                    pill
+                    className="px-3 py-2"
+                    style={{ cursor: "pointer" }}
+                    onClick={clearStatus}
+                  >
+                    {categoryStatus.label}{" "}
+                    <i className="ri-close-line ms-1"></i>
+                  </Badge>
+                  {/* <Button
+                    color="link"
+                    size="sm"
+                    className="text-danger p-0"
+                    onClick={clearStatus}
+                  >
+                    <i className="ri-delete-bin-line me-1"></i> Clear
+                  </Button> */}
+                </div>
+              )}
+            </Row>
           </CardBody>
           <AddCategoryModal isOpen={isAddModalOpen} toggle={toggleAddModal} />
           <UpdateCategoryModal
@@ -160,15 +189,14 @@ const ProductCategoryPage = () => {
 
           <CardBody>
             {fetchState.loading ? (
-              <div
-                className="d-flex justify-content-center align-items-center"
-                style={{ height: 200 }}
-              >
-                <Spinner color="primary" />
-              </div>
+              <CategorySkeletonRow
+                type="table"
+                columns={["#", "Name", "Slug", "Created", "Status", "Action"]}
+                rows={5}
+              />
             ) : fetchState.error ? (
               <div className="text-center text-danger">{fetchState.error}</div>
-            ) : list.length > 0 ? (
+            ) : tableList.length > 0 ? (
               <>
                 <div className="table-responsive">
                   <Table className="align-middle table-nowrap mb-0">
@@ -183,31 +211,45 @@ const ProductCategoryPage = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {list.map((item, index) => (
+                      {tableList.map((item, index) => (
                         <tr key={index}>
                           <td>{item.serial_no}</td>
                           <td>
                             <b>{item.name}</b>
                           </td>
                           <td>{item.slug}</td>
-
-                          <td>{item.created_at}</td>
+                          <td>{formatToIST(item.created_at)}</td>
                           <td>
-                            <Badge
-                              color={
-                                item.status === "Active" ? "success" : "danger"
+                            <span
+                              className={`badge ${
+                                item.status === "Active"
+                                  ? "bg-success-subtle text-success"
+                                  : "bg-danger-subtle text-danger"
+                              }`}
+                              style={{ cursor: "pointer" }}
+                              onClick={() =>
+                                dispatch(
+                                  categoryStatusChange({
+                                    id: item.id,
+                                    currentStatus: item.status,
+                                  })
+                                )
                               }
-                              pill
                             >
-                              {item.status?.toUpperCase() || ""}
-                            </Badge>
+                              {statusState.loading &&
+                              statusState.id === item.id ? (
+                                <Spinner size="sm" />
+                              ) : (
+                                item.status?.toUpperCase()
+                              )}
+                            </span>
                           </td>
                           <td>
                             <Button
                               color="primary"
                               size="sm"
                               className="me-2"
-                              onClick={() => handleEdit(item)}
+                              onClick={() => handleEdit(item.id)}
                             >
                               <i className="ri-pencil-line me-1"></i> Edit
                             </Button>
@@ -227,7 +269,6 @@ const ProductCategoryPage = () => {
                 </div>
 
                 <Row className="align-items-center mt-4 d-flex justify-content-between">
-                  {/* Left Side - Showing Entries */}
                   <Col md="auto">
                     <div className="text-muted">
                       Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
@@ -239,7 +280,6 @@ const ProductCategoryPage = () => {
                     </div>
                   </Col>
 
-                  {/* Right Side - Pagination (only if total records > itemsPerPage) */}
                   <Col md="auto">
                     {(recordsFiltered || recordsTotal) > itemsPerPage && (
                       <Pagination className="mb-0">

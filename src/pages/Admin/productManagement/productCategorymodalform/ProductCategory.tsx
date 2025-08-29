@@ -1,45 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Col, Input, FormFeedback, Label } from "reactstrap";
 
-interface AddCategoryFormProps {
-  onChange: (isValid: boolean, formData: any) => void;
-  initialData?: { name: string; status: string };
+type Values = {
+  name: string;
+  status: string;
+};
+
+type Errors = Partial<{
+  name: string;
+  status: string;
+}>;
+
+interface Props {
+  values: Values;
+  errors?: Errors;
+  onChange: (values: Values) => void;
 }
 
-const AddCategoryForm: React.FC<AddCategoryFormProps> = ({
+const AddCategoryForm: React.FC<Props> = ({
+  values,
+  errors = {},
   onChange,
-  initialData,
 }) => {
-  const [name, setName] = useState(initialData?.name || "");
-  const [status, setStatus] = useState(initialData?.status || "");
-
-  const [touchedName, setTouchedName] = useState(false);
-  const [touchedStatus, setTouchedStatus] = useState(false);
-
-  const [nameError, setNameError] = useState<string | null>(null);
-  const [statusError, setStatusError] = useState<string | null>(null);
-
-  // ✅ Update state if initialData changes (important for edit forms)
-  useEffect(() => {
-    if (initialData) {
-      setName(initialData.name || "");
-      setStatus(initialData.status || "");
-    }
-  }, []);
-
-  // ✅ Validation effect
-  useEffect(() => {
-    const isNameValid = name.trim() !== "";
-    const isStatusValid = status.trim() !== "";
-
-    setNameError(!isNameValid && touchedName ? "Name is required" : null);
-    setStatusError(
-      !isStatusValid && touchedStatus ? "Status is required" : null
-    );
-
-    onChange(isNameValid && isStatusValid, { name, status });
-  }, [name, status, touchedName, touchedStatus, onChange]);
-
   return (
     <div className="row g-3">
       {/* Name Field */}
@@ -50,14 +32,13 @@ const AddCategoryForm: React.FC<AddCategoryFormProps> = ({
         <Input
           type="text"
           id="categoryName"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onBlur={() => setTouchedName(true)}
+          value={values.name}
+          onChange={(e) => onChange({ ...values, name: e.target.value })}
           placeholder="Enter Product Category Name"
           autoComplete="off"
-          invalid={!!nameError}
+          invalid={!!errors.name}
         />
-        {nameError && <FormFeedback>{nameError}</FormFeedback>}
+        {errors.name && <FormFeedback>{errors.name}</FormFeedback>}
       </Col>
 
       {/* Status Field */}
@@ -73,9 +54,8 @@ const AddCategoryForm: React.FC<AddCategoryFormProps> = ({
             name="status"
             id="status-active"
             value="Active"
-            checked={status === "Active"}
-            onChange={(e) => setStatus(e.target.value)}
-            onBlur={() => setTouchedStatus(true)}
+            checked={values.status === "Active"}
+            onChange={() => onChange({ ...values, status: "Active" })}
           />
           <Label className="form-check-label" htmlFor="status-active">
             Active
@@ -88,18 +68,15 @@ const AddCategoryForm: React.FC<AddCategoryFormProps> = ({
             name="status"
             id="status-inactive"
             value="Inactive"
-            checked={status === "Inactive"}
-            onChange={(e) => setStatus(e.target.value)}
-            onBlur={() => setTouchedStatus(true)}
+            checked={values.status === "Inactive"}
+            onChange={() => onChange({ ...values, status: "Inactive" })}
           />
           <Label className="form-check-label" htmlFor="status-inactive">
             Inactive
           </Label>
         </div>
-        {statusError && (
-          <div className="text-danger mt-1" style={{ fontSize: "0.875rem" }}>
-            {statusError}
-          </div>
+        {errors.status && (
+          <FormFeedback className="d-block">{errors.status}</FormFeedback>
         )}
       </Col>
     </div>

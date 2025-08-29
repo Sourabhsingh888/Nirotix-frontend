@@ -20,7 +20,6 @@ export const isUserAuthenticated = () => {
 export const postRegister = (data : any) => api.create(url.POST_REGISTER, data);
 
 // Login Method
-// export const postFakeLogin = (data : any) => api.create(url.POST_FAKE_LOGIN, data);
 export const postLogin = (data : any) => api.create(url.POST_LOGIN, data);
 
 
@@ -123,7 +122,7 @@ export const labelMail = (forId: any) => api.delete(url.LABEL_MAIL, { headers: {
 export const trashMail = (forId: any) => api.delete(url.TRASH_MAIL, { headers: { forId } });
 
 // Product Management
-// =========================================================================================
+
 // ============================= Product Category ======================================
 // get Products
 export const getProducts = (
@@ -139,6 +138,10 @@ export const getProducts = (
     ProductCategoryStatus,
   });
 
+  // get Products by id
+export const getCategoryByid = (id: number | string) =>
+  api.get(`${url.GET_PRODUCTS_CATEGORY_BYID}/${id}`);
+
 // add Products
 export const addNewProduct = (product : any) => api.create(url.ADD_NEW_PRODUCT_CATEGORY, product);
 
@@ -151,6 +154,8 @@ return api.put(`${url.UPDATE_PRODUCT_CATEGORY}/${category.id}`, category);
 // delete Product
 export const deleteProducts = (id: number | string) => api.delete(`${url.DELETE_PRODUCT_CATEGORY}/${id}`);
 
+// product status-change
+export const categoryStatusChange = (id: number | string ) => api.update(`${url.PRODUCT_CATEGORY_STATUS_CHANGE}/${id}`);
 
 // ============================= Add Product =====================================
 
@@ -161,12 +166,17 @@ export const getProductList = (
   searchValue: string = "",
   ProductStatus: string = ""
 
-) => api.create(url.GET_PRODUCT, {
+) =>
+  api.create(url.GET_PRODUCT, {
     offset,
     limit,
     searchValue,
     ProductStatus,
   });
+
+export const getProductByid = (id: number | string) =>
+api.get(`${url.GET_PRODUCT_BYID}/${id}`);
+
 
 // add Product
 export const addProductList = (formData: FormData) =>
@@ -180,6 +190,8 @@ export const updateProductList = (id: string | number, data: { price: string; cu
 // delete Product
 export const deleteProductList = (id: number | string) => api.delete(`${url.DELETE_PRODUCT}/${id}`);
 
+// product status-change
+export const productStatusChange = (id: number | string ) => api.update(`${url.PRODUCT_STATUS_CHANGE}/${id}`);
 
 // ============================= Product Pricing =====================================
 
@@ -194,6 +206,9 @@ offset,
 limit, 
 searchValue,
 });
+
+// get Product Byid
+export const getProductPricingByid = (id: number | string) => api.get(`${url.GET_PRODUCT_PRICING_BYID}/${id}`);
 
 // add Product
 export const addProductPricingList = (productdata: any) => api.create(url.ADD_NEW_PRODUCT_PRICING, productdata);

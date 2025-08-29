@@ -1,6 +1,6 @@
+export const Image_URL="https://repaybackhand.onrender.com"
 //REGISTER
 export const POST_REGISTER = "/api/v1/register";
-export const Image_URL="https://repaybackhand.onrender.com"
 
 //LOGIN
 export const POST_LOGIN = "/api/v1/login";
@@ -39,6 +39,7 @@ export const TRASH_MAIL = "/trash/mail";
 // =========================== Product Category =================================
 export const ADD_NEW_PRODUCT_CATEGORY = "/api/v1/product-management/category/add";
 export const GET_PRODUCTS_CATEGORY = "/api/v1/product-management/category/get-list";
+export const GET_PRODUCTS_CATEGORY_BYID = "/api/v1/product-management/category/byid";
 export const UPDATE_PRODUCT_CATEGORY = "/api/v1/product-management/category/update";
 export const DELETE_PRODUCT_CATEGORY = "/api/v1/product-management/category/delete";
 export const PRODUCT_CATEGORY_STATUS_CHANGE = "/api/v1/product-management/category/change-status";
@@ -46,13 +47,15 @@ export const PRODUCT_CATEGORY_STATUS_CHANGE = "/api/v1/product-management/catego
 // ============================= Add Product =====================================
 export const ADD_NEW_PRODUCT = "/api/v1/product-management/products/add";
 export const GET_PRODUCT = "/api/v1/product-management/products/get-list";
+export const GET_PRODUCT_BYID = "/api/v1/product-management/products/byid";
 export const UPDATE_PRODUCT = "/api/v1/product-management/products/update";
 export const DELETE_PRODUCT = "/api/v1/product-management/products/delete";
 export const PRODUCT_STATUS_CHANGE = "/api/v1/product-management/products/change-status";
 
 // ============================= Product Pricing =====================================
-export const GET_PRODUCT_PRICING = "/api/v1/product-management/prices/get-list";
 export const ADD_NEW_PRODUCT_PRICING = "/api/v1/product-management/prices/add";
+export const GET_PRODUCT_PRICING = "/api/v1/product-management/prices/get-list";
+export const GET_PRODUCT_PRICING_BYID = "/api/v1/product-management/prices/byid";
 export const UPDATE_PRODUCT_PRICING = "/api/v1/product-management/prices/update";
 export const DELETE_PRODUCT_PRICING = "/api/v1/product-management/prices/delete";
 

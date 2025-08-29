@@ -12,9 +12,9 @@ import {
   Pagination,
   PaginationItem,
   PaginationLink,
-  Spinner,
 } from "reactstrap";
 import BreadCrumb from "../../../Components/Common/BreadCrumb";
+import CategorySkeletonRow from "../../../Components/Common/CategorySkeletonRow";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../../Store";
 import Swal from "sweetalert2";
@@ -31,7 +31,6 @@ const ProductPricing: React.FC = () => {
   const { list, fetchState, recordsTotal, recordsFiltered } = useSelector(
     (state: RootState) => state.ProductPrice
   );
-  console.log("list", list);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -47,23 +46,39 @@ const ProductPricing: React.FC = () => {
   const handleDelete = (id: number | string) => {
     Swal.fire({
       title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      text: "Once deleted, you will not be able to recover this data!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
+      confirmButtonColor: "#20c997", // green
+      cancelButtonColor: "#f46a6a", // red
       confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        dispatch(deleteProductPricing(id));
-      }
+      cancelButtonText: "Cancel",
+      preConfirm: () => {
+        Swal.showLoading(); // 🔄 show loader after confirm
+        return dispatch(deleteProductPricing(id)).unwrap()
+          .catch(() => {
+          });
+      },
     });
   };
-
-  const handleEdit = (item: any) => {
-    setSelectedItem(item);
+  
+  const handleEdit = (id: number | string) => {
+    setSelectedItem(id);
     setIsEditModalOpen(true);
   };
+
+function formatToIST(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
 
   const totalPages = Math.ceil(recordsFiltered / itemsPerPage);
 
@@ -130,12 +145,17 @@ const ProductPricing: React.FC = () => {
           {/* Table */}
           <CardBody>
             {fetchState.loading ? (
-              <div
-                className="d-flex justify-content-center align-items-center"
-                style={{ height: 200 }}
-              >
-                <Spinner color="primary" />
-              </div>
+              <CategorySkeletonRow
+                type="table"
+                columns={[
+                  "#",
+                  "Product Name",
+                  "Currency",
+                  "Created At",
+                  "Action",
+                ]}
+                rows={5}
+              />
             ) : fetchState.error ? (
               <div className="text-center text-danger">{fetchState.error}</div>
             ) : list.length > 0 ? (
@@ -153,19 +173,19 @@ const ProductPricing: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {list.map((item) => (
+                      {list.map((item, index) => (
                         <tr key={item.id}>
                           <td>{item.serial_no}</td>
                           <td>{item.products}</td>
                           <td>{item.price}</td>
                           <td>{item.currency}</td>
-                          <td>{item.created_at}</td>
+                          <td>{formatToIST(item.created_at)}</td>
                           <td>
                             <Button
                               color="primary"
                               size="sm"
                               className="me-2"
-                              onClick={() => handleEdit(item)}
+                              onClick={() => handleEdit(item.id)}
                             >
                               <i className="ri-pencil-line me-1"></i> Edit
                             </Button>

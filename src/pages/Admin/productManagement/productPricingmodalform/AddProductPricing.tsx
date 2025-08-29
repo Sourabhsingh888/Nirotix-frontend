@@ -1,151 +1,196 @@
-import React, { useState, useEffect } from "react";
-import { Col, Label, Row, Input, FormFeedback } from "reactstrap";
-import Select from "react-select";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState, AppDispatch } from "../../../../Store";
-import { getProducts } from "../../../../slices/addProduct/thunk";
+// import React from "react";
+// import { Col, Label, Row, Input, FormFeedback } from "reactstrap";
+// import Select from "react-select";
 
-interface ProductPricingProps {
-  onChange: (
-    isValid: boolean,
-    data: {
-      product_id: number | string;
-      price: string;
-      currency: string;
-    }
-  ) => void;
-  initialData?: {
-    product_id: number | string;
-    price: string;
-    currency: string;
-  };
+// type Values = {
+//   product_id: number | string | "";
+//   price: string;
+//   currency: string;
+// };
+
+// type Errors = Partial<{
+//   product_id: string;
+//   price: string;
+// }>;
+
+// interface Props {
+//   values: Values;
+//   errors?: Errors;
+//   onChange: (values: Values) => void;
+//   productOptions: { value: number | string; label: string }[];
+//   disableProductSelect?: boolean;
+// }
+
+// const ProductPricingForm: React.FC<Props> = ({
+//   values,
+//   errors = {},
+//   onChange,
+//   productOptions,
+//   disableProductSelect = false,
+// }) => {
+//   const selectedOption =
+//     productOptions.find((opt) => opt.value === values.product_id) || null;
+
+//   return (
+//     <div className="row g-3">
+//       {/* Product Select */}
+//       <Col xxl={12}>
+//         <Label htmlFor="productSelect" className="form-label">
+//           Products
+//         </Label>
+//         <Select
+//           inputId="productSelect"
+//           value={selectedOption}
+//           onChange={(opt) =>
+//             onChange({
+//               ...values,
+//               product_id: opt ? (opt as any).value : "",
+//             })
+//           }
+//           options={productOptions}
+//           placeholder="Select Product"
+//           isClearable
+//           isSearchable
+//           isDisabled={disableProductSelect}
+//         />
+//         {errors.product_id && (
+//           <div className="text-danger mt-1">{errors.product_id}</div>
+//         )}
+//       </Col>
+
+//       {/* Price + Currency */}
+//       <Row className="g-3">
+//         <Col md={6}>
+//           <Label htmlFor="productPrice" className="form-label">
+//             Product Price
+//           </Label>
+//           <Input
+//             type="number"
+//             id="productPrice"
+//             placeholder="Enter Price"
+//             value={values.price}
+//             onChange={(e) =>
+//               onChange({
+//                 ...values,
+//                 price: e.target.value,
+//               })
+//             }
+//             autoComplete="off"
+//             invalid={!!errors.price}
+//           />
+//           {errors.price && <FormFeedback>{errors.price}</FormFeedback>}
+//         </Col>
+
+//         <Col md={6}>
+//           <Label htmlFor="currency" className="form-label">
+//             Currency
+//           </Label>
+//           <Input type="text" id="currency" value={values.currency} disabled />
+//         </Col>
+//       </Row>
+//     </div>
+//   );
+// };
+
+// export default ProductPricingForm;
+
+
+
+
+import React from "react";
+import { Col, Label, Row, Input, FormFeedback } from "reactstrap";
+import InfiniteDropdown from "../../../../Components/Common/CategorySelect";
+
+// ✅ Define the values type once
+interface Values {
+  product_id: number | string | "";
+  price: string;
+  currency: string;
 }
 
-const ProductPricing: React.FC<ProductPricingProps> = ({
+type Errors = Partial<Record<keyof Values, string>>;
+
+interface Props {
+  values: Values;
+  errors?: Errors;
+  onChange: (values: Values) => void;
+  productprice: {
+    options: { id: number; name: string }[];
+    hasMore: boolean;
+    loadMore: () => void;
+    loading: boolean;
+  };
+  disableProductSelect?: boolean;
+}
+
+const ProductPricingForm: React.FC<Props> = ({
+  values,
+  errors = {},
   onChange,
-  initialData,
+  productprice,
+  disableProductSelect = false,
 }) => {
-  const dispatch: AppDispatch = useDispatch();
-  const { list } = useSelector((state: RootState) => state.AddProduct);
-console.log(list);
-
-
-  // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
-  // Local form states
-  const [product, setProduct] = useState<number | "">("");
-  const [price, setPrice] = useState("");
-  const [currency] = useState("INR");
-
-  // Validation state
-  const [touched, setTouched] = useState({ product: false, price: false });
-  const [errors, setErrors] = useState({ product: "", price: "" });
-
-  // Fetch products only on mount or when pagination changes
-  useEffect(() => {
-    dispatch(
-      getProducts({
-        offset: (currentPage - 1) * itemsPerPage,
-        limit: itemsPerPage,
-      })
-    );
-  }, [dispatch, currentPage]);
-
-  // Prefill from initialData only once when it changes
-  // Prefill only when product_id changes
-  useEffect(() => {
-    if (initialData?.product_id) {
-      setProduct(initialData.product_id);
-      setPrice(initialData.price || "");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialData?.product_id]);
-
-  // Run validation and pass data upward
-  useEffect(() => {
-    const newErrors = {
-      product: product ? "" : "Product is required",
-      price: price ? "" : "Price is required",
-    };
-
-    setErrors((prev) =>
-      JSON.stringify(prev) === JSON.stringify(newErrors) ? prev : newErrors
-    );
-
-    const isValid = Object.values(newErrors).every((err) => err === "");
-
-    // ✅ call onChange only when product/price/currency changes
-    onChange(isValid, { product_id: product, price, currency });
-  }, [product, price, currency]); // removed onChange from deps
-
-  // Convert API products to react-select format
-  const productOptions =
-    list?.map((p: any) => ({
-      label: p.name,
-      value: p.id,
-    })) || [];
 
   return (
     <div className="row g-3">
       {/* Product Select */}
       <Col xxl={12}>
-        <div>
-          <Label htmlFor="productSelect" className="form-label">
-            Products
-          </Label>
-          <Select
-            id="productSelect"
-            value={productOptions.find((opt) => opt.value === product) || null}
-            onChange={(selected) => setProduct(selected ? selected.value : "")}
-            onBlur={() => setTouched((prev) => ({ ...prev, product: true }))}
-            options={productOptions}
-            placeholder="Select Product"
-            isClearable
-            isSearchable
-            onMenuScrollToBottom={() => setCurrentPage((prev) => prev + 1)}
-          />
-          {touched.product && errors.product && (
-            <div className="text-danger mt-1">{errors.product}</div>
-          )}
-        </div>
+        <Label htmlFor="productSelect" className="form-label">
+          Products
+        </Label>
+        <InfiniteDropdown
+          placeholder="Select Category"
+          value={values.product_id}
+          options={(productprice?.options ?? []).map((cat) => ({
+            value: cat.value,
+            label: cat.label,
+          }))}
+          loadMore={productprice?.loadMore}
+          hasMore={productprice?.hasMore ?? false}
+          loading={productprice?.loading ?? false}
+          onChange={(id) =>
+            onChange({
+              ...values,
+              product_id: id ? Number(id) : null,
+            })
+          }
+          error={errors?.product_id}
+          isDisabled={disableProductSelect}
+        />
       </Col>
 
-      {/* Price and Currency */}
+      {/* Price + Currency */}
       <Row className="g-3">
         <Col md={6}>
-          <div>
-            <Label htmlFor="productPrice" className="form-label">
-              Product Price
-            </Label>
-            <Input
-              type="number"
-              id="productPrice"
-              placeholder="Enter Price"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              onBlur={() => setTouched((prev) => ({ ...prev, price: true }))}
-              autoComplete="off"
-              invalid={touched.price && !!errors.price}
-            />
-            {touched.price && errors.price && (
-              <FormFeedback>{errors.price}</FormFeedback>
-            )}
-          </div>
+          <Label htmlFor="productPrice" className="form-label">
+            Product Price
+          </Label>
+          <Input
+            type="number"
+            id="productPrice"
+            placeholder="Enter Price"
+            value={values.price}
+            onChange={(e) =>
+              onChange({
+                ...values,
+                price: e.target.value,
+              })
+            }
+            autoComplete="off"
+            invalid={!!errors.price}
+          />
+          {errors.price && <FormFeedback>{errors.price}</FormFeedback>}
         </Col>
 
         <Col md={6}>
-          <div>
-            <Label htmlFor="currency" className="form-label">
-              Currency
-            </Label>
-            <Input type="text" id="currency" value={currency} disabled />
-          </div>
+          <Label htmlFor="currency" className="form-label">
+            Currency
+          </Label>
+          <Input type="text" id="currency" value={values.currency} disabled />
         </Col>
       </Row>
     </div>
   );
 };
 
-export default ProductPricing;
+export default ProductPricingForm;

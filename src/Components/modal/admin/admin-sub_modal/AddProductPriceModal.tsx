@@ -1,5 +1,113 @@
-// AddProductPricingModal.tsx
-import React, { useState, useCallback } from "react";
+// import React, { useMemo, useState, useEffect } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { RootState, AppDispatch } from "../../../../Store";
+// import BaseModal from "../../basemodal/BaseModal";
+// import ProductPricing from "../../../../pages/Admin/productManagement/productPricingmodalform/AddProductPricing";
+// import { toast } from "react-toastify";
+// import {
+//   addProductPricing,
+//   getProductPricing,
+// } from "../../../../slices/productPricing/thunk";
+// import { getProducts } from "../../../../slices/addProduct/thunk";
+
+// interface ProductPricingModalProps {
+//   isOpen: boolean;
+//   toggle: () => void;
+// }
+
+// const AddProductPricingModal: React.FC<ProductPricingModalProps> = ({
+//   isOpen,
+//   toggle,
+// }) => {
+//   const dispatch = useDispatch<AppDispatch>();
+
+//   // load dropdown products when modal opens
+//   useEffect(() => {
+//     if (isOpen) {
+//       dispatch(getProducts({ offset: 0, limit: 10, context: "dropdown" }));
+//     }
+//   }, [isOpen, dispatch]);
+
+//   const { productdropdownList } = useSelector((s: RootState) => s.AddProduct);
+//   const addLoading = useSelector(
+//     (s: RootState) => s.ProductPrice.addState.loading
+//   );
+
+//   const productOptions = useMemo(
+//     () =>
+//       (productdropdownList || []).map((p: any) => ({
+//         value: p.id,
+//         label: p.name,
+//       })),
+//     [productdropdownList]
+//   );
+
+//   const [values, setValues] = useState({
+//     product_id: "" as number | string | "",
+//     price: "",
+//     currency: "INR",
+//   });
+
+//   const errors = useMemo(() => {
+//     return {
+//       product_id: values.product_id ? "" : "Product is required",
+//       price: values.price ? "" : "Price is required",
+//     };
+//   }, [values]);
+
+//   const isValid = useMemo(
+//     () => Object.values(errors).every((e) => !e),
+//     [errors]
+//   );
+
+//   const handleSubmit = async () => {
+//     if (!isValid) return;
+//     try {
+//       await dispatch(
+//         addProductPricing({
+//           product_id: values.product_id,
+//           price: values.price,
+//           currency: values.currency,
+//         })
+//       ).unwrap();
+
+//       dispatch(getProductPricing({ offset: 0, limit: 10 }));
+//       toast.success("Product pricing added!", { autoClose: 2500 });
+//       toggle();
+//       setValues({ product_id: "", price: "", currency: "INR" });
+//     } catch (err: any) {
+//       toast.error(err?.message || "Failed to add product pricing", {
+//         autoClose: 3000,
+//       });
+//     }
+//   };
+
+//   return (
+//     <BaseModal
+//       isOpen={isOpen}
+//       toggle={toggle}
+//       title="Set Product Price"
+//       submitLabel={addLoading ? "Saving..." : "Submit"}
+//       cancelLabel="Cancel"
+//       size="md"
+//       onSubmit={handleSubmit}
+//       isSubmitDisabled={!isValid || addLoading}
+//     >
+//       <ProductPricing
+//         values={values}
+//         errors={errors}
+//         onChange={setValues}
+//         productOptions={productOptions}
+//       />
+//     </BaseModal>
+//   );
+// };
+
+// export default AddProductPricingModal;
+
+
+
+import React, { useMemo, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../../../Store";
 import BaseModal from "../../basemodal/BaseModal";
@@ -9,50 +117,93 @@ import {
   addProductPricing,
   getProductPricing,
 } from "../../../../slices/productPricing/thunk";
+import { getProducts } from "../../../../slices/addProduct/thunk";
 
 interface ProductPricingModalProps {
   isOpen: boolean;
   toggle: () => void;
 }
 
-const ProductPricingModal: React.FC<ProductPricingModalProps> = ({
+const AddProductPricingModal: React.FC<ProductPricingModalProps> = ({
   isOpen,
   toggle,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [isValid, setIsValid] = useState(false);
-  const [formValues, setFormValues] = useState<any>(null);
+  const [offset, setOffset] = useState(0);
 
-  const loading = useSelector(
-    (state: RootState) => state.ProductPrice.addState.loading
+  useEffect(() => {
+    if (isOpen) {
+      setOffset(0);
+      dispatch(getProducts({ offset: 0, limit: 10, context: "dropdown" }));
+    }
+  }, [isOpen, dispatch]);
+
+  const { productdropdownList, fetchState, addState, hasMore } = useSelector(
+    (s: RootState) => s.AddProduct
+  );
+
+    const productOptions = useMemo(
+    () =>
+      (productdropdownList || []).map((p: any) => ({
+        value: p.id,
+        label: p.name,
+      })),
+    [productdropdownList]
+  );
+
+  const loadMore = () => {
+    const nextOffset = offset + 1;
+    setOffset(nextOffset);
+    dispatch(
+      getProducts({
+        offset: nextOffset,
+        limit: 10,
+        context: "dropdown",
+      })
+    );
+  };
+
+  const loading = addState.loading;
+
+  const [values, setValues] = useState({
+    product_id: "" as number | string | "",
+    price: "",
+    currency: "INR",
+  });
+
+  const errors = useMemo(() => {
+    return {
+      product_id: values.product_id ? "" : "Product is required",
+      price: values.price ? "" : "Price is required",
+    };
+  }, [values]);
+
+  const isValid = useMemo(
+    () => Object.values(errors).every((e) => !e),
+    [errors]
   );
 
   const handleSubmit = async () => {
-    if (!isValid || !formValues) return;
-
+    if (!isValid) return;
     try {
-      await dispatch(addProductPricing(formValues)).unwrap();
-      
-      // refresh pricing list
-      dispatch(
-        getProductPricing({
-          offset: 0,
-          limit: 10,
+      await dispatch(
+        addProductPricing({
+          product_id: values.product_id,
+          price: values.price,
+          currency: values.currency,
         })
-      );
+      ).unwrap();
 
+      dispatch(getProductPricing({ offset: 0, limit: 10 }));
+      toast.success("Product pricing added!", { autoClose: 2500 });
       toggle();
-    } catch (error: any) {
-      toast.error(error?.message || "Failed to add product pricing", {
+      setValues({ product_id: "", price: "", currency: "INR" });
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to add product pricing", {
         autoClose: 3000,
       });
     }
   };
-
-const handleFormChange = useCallback((valid: boolean, data: any) => {
-  setIsValid(valid);
-  setFormValues(data);
-}, []);
 
   return (
     <BaseModal
@@ -65,9 +216,19 @@ const handleFormChange = useCallback((valid: boolean, data: any) => {
       onSubmit={handleSubmit}
       isSubmitDisabled={!isValid || loading}
     >
-      <ProductPricing onChange={handleFormChange} />
+      <ProductPricing
+        values={values}
+        errors={errors}
+        onChange={setValues}
+        productprice={{
+        options: productOptions || [],
+        loadMore,
+        hasMore,
+        loading: fetchState.loading, // ✅ Pass loading too
+        }}
+      />
     </BaseModal>
   );
 };
 
-export default ProductPricingModal;
+export default AddProductPricingModal;

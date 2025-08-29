@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   getProductPricing,
+  getProductPricingById,
   addProductPricing,
   updateProductPricing,
   deleteProductPricing,
@@ -28,9 +29,11 @@ interface RequestState {
 
 interface ProductPricingState {
   list: ProductPricing[];
+  selected: ProductPricing | null; // ✅ Added for fetch by ID
   recordsTotal: number;
   recordsFiltered: number;
   fetchState: RequestState;
+  detailState: RequestState; // ✅ for getById
   addState: RequestState;
   updateState: RequestState;
   deleteState: RequestState;
@@ -44,31 +47,37 @@ const initialRequestState: RequestState = {
 
 const initialState: ProductPricingState = {
   list: [],
+  selected: null, // ✅ initialize
   recordsTotal: 0,
   recordsFiltered: 0,
   fetchState: { ...initialRequestState },
+  detailState: { ...initialRequestState }, // ✅ added
   addState: { ...initialRequestState },
   updateState: { ...initialRequestState },
   deleteState: { ...initialRequestState },
-}
+};
 
 const ProductPricingSlice = createSlice({
   name: "ProductPricing",
   initialState,
-    reducers: {
-      resetAddState: (state) => {
-        state.addState = { ...initialRequestState };
-      },
-      resetUpdateState: (state) => {
-        state.updateState = { ...initialRequestState };
-      },
-      resetDeleteState: (state) => {
-        state.deleteState = { ...initialRequestState };
-      },
-      resetFetchState: (state) => {
-        state.fetchState = { ...initialRequestState };
-      },
+  reducers: {
+    resetAddState: (state) => {
+      state.addState = { ...initialRequestState };
     },
+    resetUpdateState: (state) => {
+      state.updateState = { ...initialRequestState };
+    },
+    resetDeleteState: (state) => {
+      state.deleteState = { ...initialRequestState };
+    },
+    resetFetchState: (state) => {
+      state.fetchState = { ...initialRequestState };
+    },
+    resetSelected: (state) => {
+      // ✅ for clearing single record
+      state.selected = null;
+    },
+  },
   extraReducers: (builder) => {
     // Fetch Products
     builder
@@ -94,20 +103,44 @@ const ProductPricingSlice = createSlice({
           "Failed to fetch products";
       });
 
+    // Fetch by ID
+    builder
+      .addCase(getProductPricingById.pending, (state) => {
+        state.detailState.loading = true;
+        state.detailState.error = null;
+      })
+      .addCase(
+        getProductPricingById.fulfilled,
+        (state, action: PayloadAction<ProductPricing>) => {
+        state.detailState.loading = false;
+        state.detailState.success = true;
+          state.selected = action.payload; // ✅ store single record
+        }
+      )
+      .addCase(getProductPricingById.rejected, (state, action) => {
+        state.detailState.loading = false;
+        state.detailState.error =
+          (action.payload as string) ||
+          action.error.message ||
+          "Failed to fetch product by id";
+      });
+
     // Add Product
     builder
       .addCase(addProductPricing.pending, (state) => {
         state.addState.loading = true;
         state.addState.error = null;
       })
-      .addCase(addProductPricing.fulfilled, (state, action: PayloadAction<ProductPricing>) => {
-        state.addState.loading = false;
-        state.addState.success = true;
-        if (action.payload) {
-        state.list.push(action.payload);
-}
-
-      })
+      .addCase(
+        addProductPricing.fulfilled,
+        (state, action: PayloadAction<ProductPricing>) => {
+          state.addState.loading = false;
+          state.addState.success = true;
+          if (action.payload) {
+            state.list.push(action.payload);
+          }
+        }
+      )
       .addCase(addProductPricing.rejected, (state, action) => {
         state.addState.loading = false;
         state.addState.error =
@@ -122,14 +155,17 @@ const ProductPricingSlice = createSlice({
         state.updateState.loading = true;
         state.updateState.error = null;
       })
-      .addCase(updateProductPricing.fulfilled, (state, action: PayloadAction<ProductPricing>) => {
-        state.updateState.loading = false;
-        state.updateState.success = true;
-        const index = state.list.findIndex((p) => p.id === action.payload.id);
-        if (index !== -1) {
-          state.list[index] = action.payload;
+      .addCase(
+        updateProductPricing.fulfilled,
+        (state, action: PayloadAction<ProductPricing>) => {
+          state.updateState.loading = false;
+          state.updateState.success = true;
+          const index = state.list.findIndex((p) => p.id === action.payload.id);
+          if (index !== -1) {
+            state.list[index] = action.payload;
+          }
         }
-      })
+      )
       .addCase(updateProductPricing.rejected, (state, action) => {
         state.updateState.loading = false;
         state.updateState.error =
@@ -144,11 +180,14 @@ const ProductPricingSlice = createSlice({
         state.deleteState.loading = true;
         state.deleteState.error = null;
       })
-      .addCase(deleteProductPricing.fulfilled, (state, action: PayloadAction<number>) => {
-        state.deleteState.loading = false;
-        state.deleteState.success = true;
-        state.list = state.list.filter((p) => p.id !== action.meta.arg);
-      })
+      .addCase(
+        deleteProductPricing.fulfilled,
+        (state, action: PayloadAction<number>) => {
+          state.deleteState.loading = false;
+          state.deleteState.success = true;
+          state.list = state.list.filter((p) => p.id !== action.meta.arg);
+        }
+      )
       .addCase(deleteProductPricing.rejected, (state, action) => {
         state.deleteState.loading = false;
         state.deleteState.error =
@@ -164,6 +203,7 @@ export const {
   resetUpdateState,
   resetDeleteState,
   resetFetchState,
+  resetSelected, // ✅ export new reset
 } = ProductPricingSlice.actions;
 
 export default ProductPricingSlice.reducer;

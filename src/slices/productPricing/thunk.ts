@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import {
   getProductPricingList as getProductPricingListApi,
+  getProductPricingByid as getProductPricingByidApi,
   addProductPricingList as addProductPricingApi,
   updateProductPricingList as updateProductPricingApi,
   deleteProductPricingList as deleteProductPricingApi,
@@ -44,6 +45,23 @@ export const getProductPricing = createAsyncThunk(
   }
 );
 
+
+// ---- GET ById ----
+export const getProductPricingById = createAsyncThunk(
+  "productPricing/getById",
+  async (id: number | string, { rejectWithValue }) => {
+    try {
+      const response = await getProductPricingByidApi(id);
+      console.log(response);
+      return response.data;
+      
+    } catch (error: any) {
+      toast.error("Failed to load product pricing", { autoClose: 3000 });
+      return rejectWithValue(error?.response?.data || error.message);
+    }
+  }
+);
+
 // ---- ADD ----
 
 export const addProductPricing = createAsyncThunk(
@@ -54,8 +72,14 @@ export const addProductPricing = createAsyncThunk(
       toast.success(response.message, { autoClose: 3000 });
       return response;
     } catch (error: any) {
+      console.log(error);
       const errorMessage =
-      error?.message || "Failed to add product pricing";
+        error?.message || "Failed to add product pricing";
+       if (error.statusCode === 0) {
+         toast.warning(errorMessage, { autoClose: 3000 });
+       } else {
+         toast.error(errorMessage, { autoClose: 3000 });
+       }
       return rejectWithValue(
       error?.message || { message: errorMessage }
       );
@@ -101,6 +125,7 @@ export const deleteProductPricing = createAsyncThunk(
         response?.message || "Product pricing deleted successfully",
         { autoClose: 3000 }
       );
+      console.log(response);
       return response;
     } catch (error: any) {
       toast.error(

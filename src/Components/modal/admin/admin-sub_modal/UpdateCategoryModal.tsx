@@ -1,24 +1,20 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import BaseModal from "../../basemodal/BaseModal";
 import AddCategoryForm from "../../../../pages/Admin/productManagement/productCategorymodalform/ProductCategory";
 import {
   updateProductCategory,
   getProductCategories,
+  getProductCategoryById,
 } from "../../../../slices/productCategory/thunk";
 import { RootState, AppDispatch } from "../../../../Store";
+import CategorySkeletonRow from "../../../Common/CategorySkeletonRow";
 import { toast } from "react-toastify";
-
-interface Category {
-  id: string | number;
-  name: string;
-  status: string;
-}
 
 interface UpdateCategoryModalProps {
   isOpen: boolean;
   toggle: () => void;
-  category?: Category;
+  category?: number;
 }
 
 const UpdateCategoryModal: React.FC<UpdateCategoryModalProps> = ({
@@ -27,167 +23,95 @@ const UpdateCategoryModal: React.FC<UpdateCategoryModalProps> = ({
   category,
 }) => {
   const dispatch: AppDispatch = useDispatch();
-  const [isValid, setIsValid] = useState(false);
-  const [formData, setFormData] = useState({ name: "", status: "Active" });
 
-  const loading = useSelector(
-    (state: RootState) => state.ProductCategory.updateState.loading
+  // fetch category by id when modal is opened
+  useEffect(() => {
+    if (isOpen && category) {
+      dispatch(getProductCategoryById(category));
+    }
+  }, [isOpen, category, dispatch]);
+
+  const { selected, updateState, detailState } = useSelector(
+    (s: RootState) => s.ProductCategory
   );
 
-  // ✅ Prefill form only when category changes
+  const [values, setValues] = useState({
+    name: "",
+    status: "Active",
+  });
+
+  // prefill values when record is loaded
   useEffect(() => {
-    if (category) {
-      setFormData({ name: category.name, status: category.status });
+    if (selected && isOpen) {
+      setValues({
+        name: (selected as any).name ?? "",
+        status: String((selected as any).status ?? "Active"),
+      });
     }
-  }, [category]);
+  }, [selected, isOpen]);
 
-  // ✅ Stable callback to prevent child useEffect loops
-  const handleFormChange = useCallback((valid: boolean, data: any) => {
-    setIsValid(valid);
-    setFormData(data);
-  }, []);
+  // validation
+  const errors = useMemo(() => {
+    return {
+      name: values.name.trim() ? "" : "Name is required",
+      status: values.status ? "" : "Status is required",
+    };
+  }, [values]);
 
-  if (!category) return null;
+  const isValid = useMemo(
+    () => Object.values(errors).every((e) => !e),
+    [errors]
+  );
 
   const handleSubmit = async () => {
     if (!isValid || !category) return;
 
-    const resultAction = await dispatch(
-      updateProductCategory({ id: category.id, ...formData })
-    );
-    console.log("resultAction", resultAction);
+    const payload = {
+      id: category,
+      name: values.name,
+      status: values.status,
+    };
 
-    if (updateProductCategory.fulfilled.match(resultAction)) {
+    const res = await dispatch(updateProductCategory(payload));
+    if (updateProductCategory.fulfilled.match(res)) {
       dispatch(
-        getProductCategories({
-          offset: 0,
-          limit: 10,
-          searchValue: "",
-          ProductCategoryStatus: "",
-        })
+        getProductCategories({ offset: 0, limit: 10, context: "table" })
       );
       toggle();
     } else {
       toast.error(
-        resultAction.payload?.message || "Failed to update category",
-        { autoClose: 3000 }
+        (res.payload as any)?.message || "Failed to update category",
+        {
+          autoClose: 3000,
+        }
       );
     }
   };
+
+  if (!category) return null;
+
+  const updateloading = updateState.loading;
+  const fetchbyidloading = detailState.loading;
 
   return (
     <BaseModal
       isOpen={isOpen}
       toggle={toggle}
       title="Update Product Category"
-      submitLabel={loading ? "Updating..." : "Update"}
+      submitLabel={updateloading ? "Updating..." : "Update"}
       cancelLabel="Cancel"
       size="md"
       onSubmit={handleSubmit}
-      isSubmitDisabled={!isValid || loading}
+      isSubmitDisabled={!isValid || updateloading || fetchbyidloading}
     >
-      <AddCategoryForm
-        initialData={formData}
-        onChange={handleFormChange} // ✅ stable
-      />
+      {fetchbyidloading ? (
+        // use your dynamic skeleton here
+        <CategorySkeletonRow type="form" rows={2} columns={1} />
+      ) : (
+        <AddCategoryForm values={values} errors={errors} onChange={setValues} />
+      )}
     </BaseModal>
   );
 };
 
 export default UpdateCategoryModal;
-
-// import React, { useState, useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import BaseModal from "../../basemodal/BaseModal";
-// import AddCategoryForm from "../../../../pages/Admin/productManagement/productCategorymodalform/ProductCategory";
-// import {
-//   updateProductCategory,
-//   getProductCategories,
-// } from "../../../../slices/ecommerce/thunk";
-// import { RootState, AppDispatch } from "../../../../Store";
-// import { toast } from "react-toastify";
-
-// interface Category {
-//   id: string | number;
-//   name: string;
-//   status: string;
-// }
-
-// interface UpdateCategoryModalProps {
-//   isOpen: boolean;
-//   toggle: () => void;
-//   category?: Category; // allow undefined
-// }
-
-// const UpdateCategoryModal: React.FC<UpdateCategoryModalProps> = ({
-//   isOpen,
-//   toggle,
-//   category,
-// }) => {
-//   const dispatch: AppDispatch = useDispatch<any>();
-//   const [isValid, setIsValid] = useState(false);
-// const [formData, setFormData] = useState({ name: "", status: "Active" });
-
-// useEffect(() => {
-//   if (category) {
-//     setFormData({ name: category.name, status: category.status });
-//   }
-// }, [category]);
-
-//   const loading = useSelector(
-//     (state: RootState) => state.Ecommerce.updateState.loading
-//   );
-
-//   const handleSubmit = async () => {
-//     if (!isValid) return;
-
-//     const resultAction = await dispatch(
-//       updateProductCategory({ id: category.id, ...formData })
-//     );
-//     if (updateProductCategory.fulfilled.match(resultAction)) {
-//       toast.success(
-//         resultAction.payload.message || "Category updated successfully",
-//         { autoClose: 3000 }
-//       );
-//       dispatch(
-//         getProductCategories({
-//           offset: 0,
-//           limit: 10,
-//           searchValue: "",
-//           ProductCategoryStatus: "",
-//         })
-//       );
-//       toggle();
-//     } else {
-//       toast.error(
-//         resultAction.payload?.message || "Failed to update category",
-//         { autoClose: 3000 }
-//       );
-//     }
-//   };
-
-//   if (!category) return null;
-
-//   return (
-//     <BaseModal
-//       isOpen={isOpen}
-//       toggle={toggle}
-//       title="Update Product Category"
-//       submitLabel={loading ? "Updating..." : "Update"}
-//       cancelLabel="Cancel"
-//       size="md"
-//       onSubmit={handleSubmit}
-//       isSubmitDisabled={!isValid || loading}
-//     >
-//       <AddCategoryForm
-//         initialData={formData}
-//         onChange={(valid, data) => {
-//           setIsValid(valid);
-//           setFormData(data);
-//         }}
-//       />
-//     </BaseModal>
-//   );
-// };
-
-// export default UpdateCategoryModal;
