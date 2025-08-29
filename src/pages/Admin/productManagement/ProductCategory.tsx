@@ -40,11 +40,8 @@ const ProductCategoryPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { tableList, fetchState, recordsTotal, recordsFiltered, statusState } =
     useSelector((state: RootState) => state.ProductCategory);
-
-  console.log("tableList", tableList);
   
   const [currentPage, setCurrentPage] = useState(1);
-
   const [categoryStatus, setCategoryStatus] = useState<any | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -64,7 +61,7 @@ const ProductCategoryPage = () => {
         limit: itemsPerPage,
         context: "table",
         searchValue: searchValue.trim(),
-        ProductCategoryStatus:categoryStatus
+        ProductCategoryStatus: categoryStatus?.value || "",
       })
     );
   }, [dispatch, categoryStatus, searchValue, currentPage]);
@@ -156,27 +153,41 @@ const ProductCategoryPage = () => {
               </Col>
             </Row>
             <Row>
-              {/* ✅ Show single badge if status selected */}
               {categoryStatus && (
-                <div className="mt-2 d-flex flex-wrap gap-2">
-                  <Badge
-                    pill
-                    className="px-3 py-2"
-                    style={{ cursor: "pointer" }}
-                    onClick={clearStatus}
-                  >
-                    {categoryStatus.label}{" "}
-                    <i className="ri-close-line ms-1"></i>
-                  </Badge>
-                  {/* <Button
-                    color="link"
-                    size="sm"
-                    className="text-danger p-0"
-                    onClick={clearStatus}
-                  >
-                    <i className="ri-delete-bin-line me-1"></i> Clear
-                  </Button> */}
-                </div>
+                <>
+                  {/* ✅ Results Count full width */}
+                  <Col xs={12}>
+                    <div className="mt-3">
+                      <strong>{recordsFiltered || 0}</strong> results found
+                    </div>
+                  </Col>
+
+                  {/* ✅ Status filter box (1/3 of 12 columns) */}
+                  <Col xs={12} md={2} className="mt-2">
+                    <div className="border border-dashed rounded p-2 align-items-center">
+                      <span>
+                        <strong>Status: </strong>
+                      </span>
+                      <Badge
+                        pill
+                        className="px-3 py-2"
+                        style={{ cursor: "pointer" }}
+                        onClick={clearStatus}
+                      >
+                        {categoryStatus.label}{" "}
+                        <i className="ri-close-line ms-1"></i>
+                      </Badge>
+                    </div>
+                    <Button
+                      color="link"
+                      size="sm"
+                      className="text-danger p-0"
+                      onClick={clearStatus}
+                    >
+                      <i className="ri-delete-bin-line me-1"></i> Clear
+                    </Button>
+                  </Col>
+                </>
               )}
             </Row>
           </CardBody>

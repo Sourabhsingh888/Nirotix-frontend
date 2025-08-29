@@ -42,13 +42,18 @@ interface ProductCategoryState {
   recordsTotal: number;
   recordsFiltered: number;
   fetchState: RequestState;
-  detailState: RequestState; // ✅ for getById
+  detailState: RequestState;
   addState: RequestState;
   updateState: RequestState;
   deleteState: RequestState;
-  statusState: StatusState; // ✅ custom type with id
+  statusState: StatusState;
   hasMore: boolean;
+
+  // 🔑 pagination
+  offset: number;
+  limit: number;
 }
+
 
 
 const initialRequestState: RequestState = {
@@ -64,13 +69,18 @@ const initialState: ProductCategoryState = {
   recordsTotal: 0,
   recordsFiltered: 0,
   fetchState: { ...initialRequestState },
-  detailState: { ...initialRequestState }, // ✅ added
+  detailState: { ...initialRequestState },
   addState: { ...initialRequestState },
   updateState: { ...initialRequestState },
   deleteState: { ...initialRequestState },
-  statusState: { ...initialRequestState, id: null }, // ✅ fixed
+  statusState: { ...initialRequestState, id: null },
   hasMore: true,
+
+  // ✅ defaults
+  offset: 0,
+  limit: 10,
 };
+
 
 
 const ProductCategorySlice = createSlice({
@@ -90,11 +100,9 @@ const ProductCategorySlice = createSlice({
       state.fetchState = { ...initialRequestState };
     },
     resetStatusState: (state) => {
-      // ✅ new
       state.statusState = { ...initialRequestState };
     },
     resetSelected: (state) => {
-      // ✅ for clearing single record
       state.selected = null;
     },
   },
@@ -113,27 +121,26 @@ const ProductCategorySlice = createSlice({
 
           const { data, recordsTotal, recordsFiltered, offset, context } =
             action.payload;
-          
+
+          // ✅ always update pagination state
+          state.offset = offset;
+          state.limit = 10; // or action.payload.limit if your API sends it
 
           if (context === "table") {
-            // Table listing → overwrite (normal pagination)
             state.tableList = data;
             state.recordsTotal = recordsTotal;
             state.recordsFiltered = recordsFiltered;
           }
 
-if (context === "dropdown") {
-  if (offset === 0) {
-    state.dropdownList = data;
-  } else {
-    state.dropdownList = [...state.dropdownList, ...data];
-  }
-
-  // Use recordsTotal to calculate if more exist
-  const loadedSoFar = state.dropdownList.length;
-  state.hasMore = loadedSoFar < recordsTotal;
-}
-
+          if (context === "dropdown") {
+            if (offset === 0) {
+              state.dropdownList = data;
+            } else {
+              state.dropdownList = [...state.dropdownList, ...data];
+            }
+            const loadedSoFar = state.dropdownList.length;
+            state.hasMore = loadedSoFar < recordsTotal;
+          }
         }
       )
 

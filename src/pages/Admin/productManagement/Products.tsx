@@ -57,7 +57,7 @@ const Products = () => {
         limit: itemsPerPage,
         context: "table",
         searchValue: searchValue.trim(),
-        ProductStatus:productStatus || "",
+        ProductStatus:productStatus?.value || "",
       })
     );
   }, [dispatch, productStatus, searchValue, currentPage]);
