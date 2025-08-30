@@ -12,7 +12,7 @@ const { api } = config;
 axios.defaults.baseURL = api.API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-// 🔐 Request Interceptor — Attach token + check expiry
+// Request Interceptor — Attach token + check expiry
 axios.interceptors.request.use((config: AxiosRequestConfig) => {
   const token = Cookies.get("token");
 
@@ -112,7 +112,7 @@ class APIClient {
   };
 
   create = (url: string, data: any, config?: AxiosRequestConfig): Promise<AxiosResponse> => {
-    // ⚡ if data is FormData, remove content-type header
+    //  if data is FormData, remove content-type header
     if (data instanceof FormData) {
       return axios.post(url, data, {
         ...config,

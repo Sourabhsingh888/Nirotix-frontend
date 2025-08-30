@@ -1,4 +1,3 @@
-// src/store/addproduct/thunk.ts
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -22,7 +21,7 @@ export const getProducts = createAsyncThunk(
       context,
       searchValue = "",
       ProductStatus = "",
-      categoryId = "",  // 👈 added
+      categoryId = "",
 
     }: {
       offset?: number;
@@ -35,15 +34,15 @@ export const getProducts = createAsyncThunk(
     },
     { rejectWithValue }
   ) => {
-    
+
     try {
-      
+
       const response = await getProductListApi(
         offset,
         limit,
         searchValue,
         ProductStatus,
-        categoryId   // 👈 API me bhej do
+        categoryId
 
       );
       return {
@@ -81,7 +80,7 @@ export const getProductById = createAsyncThunk(
 export const addProduct = createAsyncThunk(
   "product/addProduct",
   async (formData: FormData, { rejectWithValue }) => {
-  
+
     try {
       const response = await addProductApi(formData);
       toast.success(response.message, { autoClose: 3000 });
@@ -98,13 +97,13 @@ export const addProduct = createAsyncThunk(
 export const updateProduct = createAsyncThunk(
   "product/updateProduct",
   async (
- { id, data }: { id: string | number; data: { price: string; currency: string } },
+    { id, data }: { id: string | number; data: { price: string; currency: string } },
     { rejectWithValue }
   ) => {
     try {
       const response = await updateProductApi(id, data);
       toast.success(response.message);
-    return response;
+      return response;
     } catch (error: any) {
       toast.error(error.message || "Failed to update product", {
         autoClose: 3000,
@@ -121,12 +120,10 @@ export const deleteProduct = createAsyncThunk(
   async (id: number | string, { rejectWithValue }) => {
     try {
       const response = await deleteProductApi(id);
-
-      // ✅ backend message or fallback
       toast.success(response?.message || "Product deleted successfully", {
         autoClose: 3000,
       });
-      
+
       return response;
 
     } catch (error: any) {
@@ -149,7 +146,6 @@ export const productStatusChange = createAsyncThunk(
         autoClose: 3000,
       });
       if (response.success) {
-        // backend doesn’t send new status, so we toggle locally
         const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
         return { id, newStatus };
       } else {

@@ -40,7 +40,7 @@ const ProductCategoryPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { tableList, fetchState, recordsTotal, recordsFiltered, statusState } =
     useSelector((state: RootState) => state.ProductCategory);
-  
+
   const [currentPage, setCurrentPage] = useState(1);
   const [categoryStatus, setCategoryStatus] = useState<any | null>(null);
   const [searchValue, setSearchValue] = useState("");
@@ -53,7 +53,6 @@ const ProductCategoryPage = () => {
   const toggleAddModal = () => setIsAddModalOpen(!isAddModalOpen);
   const toggleUpdateModal = () => setIsUpdateModalOpen(!isUpdateModalOpen);
 
-  // Fetch categories from API (Server-side Pagination)
   useEffect(() => {
     dispatch(
       getProductCategories({
@@ -90,7 +89,7 @@ const ProductCategoryPage = () => {
         Swal.showLoading();
         return dispatch(deleteProductCategory(id))
           .unwrap()
-          .catch(() => {});
+          .catch(() => { });
       },
     });
   };
@@ -155,44 +154,44 @@ const ProductCategoryPage = () => {
             <Row>
               {categoryStatus && (
                 <>
-                  {/* ✅ Results Count full width */}
+
                   <Col xs={12}>
                     <div className="mt-3">
                       <strong>{recordsFiltered || 0}</strong> results found
                     </div>
                   </Col>
 
-                {/* ✅ Status filter box (1/3 of 12 columns) */}
-<Col xs={12} md={3} className="mt-2">
-  <div
-    className="border border-dashed rounded p-2 d-flex align-items-center"
-    style={{ borderWidth: "2px" }}
-  >
-    {/* Status label */}
-    <strong className="me-2">Status:</strong>
 
-    {/* Badge */}
-    <Badge
-      pill
-      className="px-3 py-2 me-2 d-flex align-items-center"
-      style={{ cursor: "pointer" }}
-      onClick={clearStatus}
-    >
-      {categoryStatus.label}
-      <i className="ri-close-line ms-1"></i>
-    </Badge>
+                  <Col xs={12} md={3} className="mt-2">
+                    <div
+                      className="border border-dashed rounded p-2 d-flex align-items-center"
+                      style={{ borderWidth: "2px" }}
+                    >
 
-    {/* Clear Button */}
-    <Button
-      color="link"
-      size="sm"
-      className="text-danger p-0 d-flex align-items-center"
-      onClick={clearStatus}
-    >
-      <i className="ri-delete-bin-line me-1"></i> Clear
-    </Button>
-  </div>
-</Col>
+                      <strong className="me-2">Status:</strong>
+
+
+                      <Badge
+                        pill
+                        className="px-3 py-2 me-2 d-flex align-items-center"
+                        style={{ cursor: "pointer" }}
+                        onClick={clearStatus}
+                      >
+                        {categoryStatus.label}
+                        <i className="ri-close-line ms-1"></i>
+                      </Badge>
+
+
+                      <Button
+                        color="link"
+                        size="sm"
+                        className="text-danger p-0 d-flex align-items-center"
+                        onClick={clearStatus}
+                      >
+                        <i className="ri-delete-bin-line me-1"></i> Clear
+                      </Button>
+                    </div>
+                  </Col>
 
 
                 </>
@@ -240,11 +239,10 @@ const ProductCategoryPage = () => {
                           <td>{formatToIST(item.created_at)}</td>
                           <td>
                             <span
-                              className={`badge ${
-                                item.status === "Active"
+                              className={`badge ${item.status === "Active"
                                   ? "bg-success-subtle text-success"
                                   : "bg-danger-subtle text-danger"
-                              }`}
+                                }`}
                               style={{ cursor: "pointer" }}
                               onClick={() =>
                                 dispatch(
@@ -256,7 +254,7 @@ const ProductCategoryPage = () => {
                               }
                             >
                               {statusState.loading &&
-                              statusState.id === item.id ? (
+                                statusState.id === item.id ? (
                                 <Spinner size="sm" />
                               ) : (
                                 item.status?.toUpperCase()

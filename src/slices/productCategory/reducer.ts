@@ -48,8 +48,6 @@ interface ProductCategoryState {
   deleteState: RequestState;
   statusState: StatusState;
   hasMore: boolean;
-
-  // 🔑 pagination
   offset: number;
   limit: number;
 }
@@ -75,8 +73,6 @@ const initialState: ProductCategoryState = {
   deleteState: { ...initialRequestState },
   statusState: { ...initialRequestState, id: null },
   hasMore: true,
-
-  // ✅ defaults
   offset: 0,
   limit: 10,
 };
@@ -107,7 +103,6 @@ const ProductCategorySlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Fetch Categories
     builder
       .addCase(getProductCategories.pending, (state) => {
         state.fetchState.loading = true;
@@ -121,10 +116,8 @@ const ProductCategorySlice = createSlice({
 
           const { data, recordsTotal, recordsFiltered, offset, context } =
             action.payload;
-
-          // ✅ always update pagination state
           state.offset = offset;
-          state.limit = 10; // or action.payload.limit if your API sends it
+          state.limit = 10;
 
           if (context === "table") {
             state.tableList = data;
@@ -234,8 +227,6 @@ const ProductCategorySlice = createSlice({
           state.tableList = state.tableList.filter(
             (item) => item.id !== action.meta.arg
           );
-
-          // 🔄 Decrement totals
           state.recordsTotal = Math.max(state.recordsTotal - 1, 0);
           state.recordsFiltered = Math.max(state.recordsFiltered - 1, 0);
         }
@@ -249,13 +240,11 @@ const ProductCategorySlice = createSlice({
           "Failed to delete category";
       });
 
-    // ---------------- Change Status ----------------
+    // Change Status
     builder
       .addCase(categoryStatusChange.pending, (state, action) => {
         const { id, currentStatus } = action.meta.arg;
         const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
-
-        // Optimistic UI update
         const index = state.tableList.findIndex((cat) => cat.id === id);
         if (index !== -1) {
           state.tableList[index].status = newStatus;
@@ -274,12 +263,10 @@ const ProductCategorySlice = createSlice({
         state.statusState.success = false;
         state.statusState.error = action.payload || "Failed to update";
         state.statusState.id = null;
-
-        // 🔄 rollback status if API failed
         const { id, currentStatus } = action.meta.arg;
         const index = state.tableList.findIndex((cat) => cat.id === id);
         if (index !== -1) {
-          state.tableList[index].status = currentStatus; // revert
+          state.tableList[index].status = currentStatus;
         }
       });
   },

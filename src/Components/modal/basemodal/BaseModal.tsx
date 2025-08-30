@@ -31,11 +31,10 @@ const BaseModal: React.FC<BaseModalProps> = ({
     toggle();
   };
 
-  // Header classes
+
   const headerClass =
     headerVariant === "darks" ? "custom-modal-header bg-dark" : "bg-white text-dark";
 
-  // Close button class based on variant
   const closeBtnClass = headerVariant === "darks" ? "btn-close btn-close-white" : "btn-close";
 
   return (
@@ -48,7 +47,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
     >
       <ModalHeader
         className={headerClass}
-        
+
         close={
           <button
             type="button"

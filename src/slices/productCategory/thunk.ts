@@ -1,4 +1,3 @@
-// src/store/productCategory/thunk.ts
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,7 +11,7 @@ import {
   categoryStatusChange as StatusChangeApi,
 } from "../../helpers/auth_api_helper";
 
-// ---- GET ALL ----
+// GET ALL 
 export const getProductCategories = createAsyncThunk(
   "productCategory/getProductCategories",
   async (
@@ -38,7 +37,7 @@ export const getProductCategories = createAsyncThunk(
         searchValue,
         ProductCategoryStatus,
       );
-      
+
       return {
         data: response.data,
         recordsTotal: response.recordsTotal,
@@ -74,14 +73,14 @@ export const addProductCategory = createAsyncThunk(
   async (category: { name: string; status: "Active" | "Inactive" }, { rejectWithValue }) => {
     try {
       const response = await addProductCategoryApi(category);
-      toast.success( response.message, { autoClose: 3000 });
+      toast.success(response.message, { autoClose: 3000 });
       return response.message;
     } catch (error: any) {
 
       if (error.status === 2) {
         toast.warning(error.message, { autoClose: 3000 });
       } else {
-      toast.error(error.message, { autoClose: 3000 });
+        toast.error(error.message, { autoClose: 3000 });
       }
 
       return rejectWithValue(error.message || "Failed to add category");
@@ -105,7 +104,7 @@ export const updateProductCategory = createAsyncThunk(
 );
 
 // ---- DELETE ----
- export const deleteProductCategory = createAsyncThunk(
+export const deleteProductCategory = createAsyncThunk(
   "productCategory/deleteProductCategory",
   async (id: number | string, { rejectWithValue }) => {
     try {
@@ -115,9 +114,9 @@ export const updateProductCategory = createAsyncThunk(
     } catch (error: any) {
       console.log(error);
       if (error.details.statusCode === 0) {
-          toast.warning(error?.message, { autoClose: 3000 });
+        toast.warning(error?.message, { autoClose: 3000 });
       } else {
-          toast.error(error?.message, { autoClose: 3000 });
+        toast.error(error?.message, { autoClose: 3000 });
       }
       return rejectWithValue(error || "Failed to delete product category");
     }
@@ -135,7 +134,6 @@ export const categoryStatusChange = createAsyncThunk(
         autoClose: 3000,
       });
       if (response.success) {
-        // backend doesn’t send new status, so we toggle locally
         const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
         return { id, newStatus };
       } else {

@@ -18,22 +18,22 @@ export const isUserAuthenticated = () => {
 };
 
 // Register Method
-export const postRegister = (data : any) => api.create(url.POST_REGISTER, data);
+export const postRegister = (data: any) => api.create(url.POST_REGISTER, data);
 
 // Login Method
-export const postLogin = (data : any) => api.create(url.POST_LOGIN, data);
+export const postLogin = (data: any) => api.create(url.POST_LOGIN, data);
 
 
 // postForgetPwd
-export const postFakeForgetPwd = (data : any) => api.create(url.POST_FAKE_PASSWORD_FORGET, data);
+export const postFakeForgetPwd = (data: any) => api.create(url.POST_FAKE_PASSWORD_FORGET, data);
 
 // Edit profile
-export const postJwtProfile = (data : any) => api.create(url.POST_EDIT_JWT_PROFILE, data);
+export const postJwtProfile = (data: any) => api.create(url.POST_EDIT_JWT_PROFILE, data);
 
-export const postFakeProfile = (data : any) => api.update(url.POST_EDIT_PROFILE + '/' + data.idx, data);
+export const postFakeProfile = (data: any) => api.update(url.POST_EDIT_PROFILE + '/' + data.idx, data);
 
 // Register Method
-export const postJwtRegister = (url : string, data  :any) => {
+export const postJwtRegister = (url: string, data: any) => {
   return api.create(url, data)
     .catch(err => {
       var message;
@@ -65,10 +65,10 @@ export const postJwtLogin = (data: any, headers: any = {}) => {
 
 
 // postForgetPwd
-export const postJwtForgetPwd = (data : any) => api.create(url.POST_FAKE_JWT_PASSWORD_FORGET, data);
+export const postJwtForgetPwd = (data: any) => api.create(url.POST_FAKE_JWT_PASSWORD_FORGET, data);
 
 // postSocialLogin
-export const postSocialLogin = (data : any) => api.create(url.SOCIAL_LOGIN, data);
+export const postSocialLogin = (data: any) => api.create(url.SOCIAL_LOGIN, data);
 
 // Calendar
 // get Events
@@ -81,26 +81,26 @@ export const getCategories = () => api.get(url.GET_CATEGORIES, '');
 export const getUpCommingEvent = () => api.get(url.GET_UPCOMMINGEVENT, '');
 
 // add Events
-export const addNewEvent = (event : any) => api.create(url.ADD_NEW_EVENT, event);
+export const addNewEvent = (event: any) => api.create(url.ADD_NEW_EVENT, event);
 
 // update Event
-export const updateEvent = (event : any) => api.put(url.UPDATE_EVENT, event);
+export const updateEvent = (event: any) => api.put(url.UPDATE_EVENT, event);
 
 // delete Event
-export const deleteEvent = (event : any) => api.delete(url.DELETE_EVENT, { headers: { event } });
+export const deleteEvent = (event: any) => api.delete(url.DELETE_EVENT, { headers: { event } });
 
 // Chat
 // get Contact
 export const getDirectContact = () => api.get(url.GET_DIRECT_CONTACT, '');
 
 // get Messages
-export const getMessages = (roomId : any) => api.get(`${url.GET_MESSAGES}/${roomId}`, { params: { roomId } });
+export const getMessages = (roomId: any) => api.get(`${url.GET_MESSAGES}/${roomId}`, { params: { roomId } });
 
 // add Message
-export const addMessage = (message : any) => api.create(url.ADD_MESSAGE, message);
+export const addMessage = (message: any) => api.create(url.ADD_MESSAGE, message);
 
 // add Message
-export const deleteMessage = (message : any) => api.delete(url.DELETE_MESSAGE, { headers: { message } });
+export const deleteMessage = (message: any) => api.delete(url.DELETE_MESSAGE, { headers: { message } });
 
 
 // MailBox
@@ -108,7 +108,7 @@ export const deleteMessage = (message : any) => api.delete(url.DELETE_MESSAGE, {
 export const getMailDetails = () => api.get(url.GET_MAIL_DETAILS, '');
 
 // delete Mail
-export const deleteMail = (forId  :any) => api.delete(url.DELETE_MAIL, { headers: { forId } });
+export const deleteMail = (forId: any) => api.delete(url.DELETE_MAIL, { headers: { forId } });
 
 // unread Mail
 export const unreadMail = (forId: any) => api.delete(url.UNREAD_MAIL, { headers: { forId } });
@@ -139,35 +139,35 @@ export const getProducts = (
     ProductCategoryStatus,
   });
 
-  // get Products by id
+// get Products by id
 export const getCategoryByid = (id: number | string) =>
   api.get(`${url.GET_PRODUCTS_CATEGORY_BYID}/${id}`);
 
 // add Products
-export const addNewProduct = (product : any) => api.create(url.ADD_NEW_PRODUCT_CATEGORY, product);
+export const addNewProduct = (product: any) => api.create(url.ADD_NEW_PRODUCT_CATEGORY, product);
 
 // update Products
-interface Category {id : number | string, name: string; status: "Active" | "Inactive" }
+interface Category { id: number | string, name: string; status: "Active" | "Inactive" }
 export const updateProduct = (category: Category) => {
-return api.put(`${url.UPDATE_PRODUCT_CATEGORY}/${category.id}`, category);
+  return api.put(`${url.UPDATE_PRODUCT_CATEGORY}/${category.id}`, category);
 }
 
 // delete Product
 export const deleteProducts = (id: number | string) => api.delete(`${url.DELETE_PRODUCT_CATEGORY}/${id}`);
 
 // product status-change
-export const categoryStatusChange = (id: number | string ) => api.update(`${url.PRODUCT_CATEGORY_STATUS_CHANGE}/${id}`);
+export const categoryStatusChange = (id: number | string) => api.update(`${url.PRODUCT_CATEGORY_STATUS_CHANGE}/${id}`);
 
-// ============================= Add Product =====================================
+// ============================= Product =====================================
 
-// get Product list 
+// get Product 
 export const getProductList = (
   offset: number = 0,
   limit: number = 10,
   searchValue: string = "",
   ProductStatus: string = "",
   categoryId?: string
-  
+
 
 ) =>
   api.create(url.GET_PRODUCT, {
@@ -178,8 +178,9 @@ export const getProductList = (
     categoryId
   });
 
+//productBYID
 export const getProductByid = (id: number | string) =>
-api.get(`${url.GET_PRODUCT_BYID}/${id}`);
+  api.get(`${url.GET_PRODUCT_BYID}/${id}`);
 
 
 // add Product
@@ -195,39 +196,39 @@ export const updateProductList = (id: string | number, data: { price: string; cu
 export const deleteProductList = (id: number | string) => api.delete(`${url.DELETE_PRODUCT}/${id}`);
 
 // product status-change
-export const productStatusChange = (id: number | string ) => api.update(`${url.PRODUCT_STATUS_CHANGE}/${id}`);
+export const productStatusChange = (id: number | string) => api.update(`${url.PRODUCT_STATUS_CHANGE}/${id}`);
 
 // ============================= Product Pricing =====================================
 
-// get Product list 
+// get Product pricing
 export const getProductPricingList = (
-offset: number = 0,
-limit: number = 10,
-searchValue: string = "",
-  
+  offset: number = 0,
+  limit: number = 10,
+  searchValue: string = "",
+
 ) => api.create(url.GET_PRODUCT_PRICING, {
-offset,
-limit, 
-searchValue,
+  offset,
+  limit,
+  searchValue,
 });
 
-// get Product Byid
+// get Product pricing Byid
 export const getProductPricingByid = (id: number | string) => api.get(`${url.GET_PRODUCT_PRICING_BYID}/${id}`);
 
-// add Product
+// add Product pricing
 export const addProductPricingList = (productdata: any) => api.create(url.ADD_NEW_PRODUCT_PRICING, productdata);
 
-// ✅ Update Product Pricing API Helper
+//  Update Product Pricing 
 export const updateProductPricingList = (productdata: {
   id: string | number;
   price: string | number;
   currency: string;
 }) => api.put(`${url.UPDATE_PRODUCT_PRICING}/${productdata.id}`, {
-    price: productdata.price,
-    currency: productdata.currency,
-  });
+  price: productdata.price,
+  currency: productdata.currency,
+});
 
-// delete Productprice
+// delete Product pricing
 export const deleteProductPricingList = (id: number | string) => api.delete(`${url.DELETE_PRODUCT_PRICING}/${id}`);
 
 
@@ -251,7 +252,7 @@ export const getServiceSwitchingList = (
 });
 
 // add new Service Switching
-export const addServiceSwitching = (serviceData: any) => 
+export const addServiceSwitching = (serviceData: any) =>
   api.create(url.ADD_NEW_SERVICE_SWITCHING, serviceData);
 
 // update existing Service Switching
@@ -267,8 +268,8 @@ export const updateServiceSwitching = (serviceData: {
   tds?: number;
   txn_limit?: number;
   status: string;
-  
-  
+
+
 }) => api.put(`${url.UPDATE_SERVICE_SWITCHING}/${serviceData.id}`, {
   api_id: serviceData.api_id,
   product_id: serviceData.product_id,
@@ -283,7 +284,7 @@ export const updateServiceSwitching = (serviceData: {
 });
 
 // delete Service Switching
-export const deleteServiceSwitching = (id: number | string) => 
+export const deleteServiceSwitching = (id: number | string) =>
   api.delete(`${url.DELETE_SERVICE_SWITCHING}/${id}`);
 
 
@@ -335,7 +336,7 @@ export const updateMessageList = (messageData: {
     status: messageData.status,
   });
 
-  export const getMessageByIdList = (id: number | string) =>
+export const getMessageByIdList = (id: number | string) =>
   api.get(`${url.GET_MESSAGE_API_BY_ID}/${id}`);
 
 // delete message api
@@ -349,9 +350,7 @@ export const changeMessageApiStatus = (id: number | string) => {
 
 
 
-
-// White Listed IP
-
+//------------------ White Listed IP-------------------------
 
 // Get Whitelisted IP List
 export const getWhitelistedIpList = () =>
@@ -376,7 +375,7 @@ export const deleteWhitelistedIp = (id: number | string) =>
 
 
 
-//webhook
+//------------webhook--------------------
 
 //update
 export const updateWebhook = (data: { url: string }) =>
@@ -387,10 +386,9 @@ export const getWebhook = () => api.get(`${url.GET_WEBHOOK}`);
 
 
 
-//api & key
+//---------------api & key--------------------
 
 
-// Add API Key
 //  Get all API Keys
 export const getApiTokenKeys = () => api.get(`${GET_API_KEYS}`);
 
@@ -420,25 +418,25 @@ export const getUserDashboardWallet = () => api.get(`${url.GET_WALLET}`);
 export const getOrders = () => api.get(url.GET_ORDERS, '');
 
 // add Order
-export const addNewOrder = (order : any) => api.create(url.ADD_NEW_ORDER, order);
+export const addNewOrder = (order: any) => api.create(url.ADD_NEW_ORDER, order);
 
 // update Order
-export const updateOrder = (order : any) => api.update(url.UPDATE_ORDER, order);
+export const updateOrder = (order: any) => api.update(url.UPDATE_ORDER, order);
 
 // delete Order
-export const deleteOrder = (order : any) => api.delete(url.DELETE_ORDER , { headers: { order } });
+export const deleteOrder = (order: any) => api.delete(url.DELETE_ORDER, { headers: { order } });
 
 // get Customers
 export const getCustomers = () => api.get(url.GET_CUSTOMERS, '');
 
 // add Customers
-export const addNewCustomer = (customer : any) => api.create(url.ADD_NEW_CUSTOMER, customer);
+export const addNewCustomer = (customer: any) => api.create(url.ADD_NEW_CUSTOMER, customer);
 
 // update Customers
-export const updateCustomer = (customer : any) => api.update(url.UPDATE_CUSTOMER, customer);
+export const updateCustomer = (customer: any) => api.update(url.UPDATE_CUSTOMER, customer);
 
 // delete Customers
-export const deleteCustomer = (customer : any) => api.delete(url.DELETE_CUSTOMER, { headers: { customer } });
+export const deleteCustomer = (customer: any) => api.delete(url.DELETE_CUSTOMER, { headers: { customer } });
 
 // get Sellers
 export const getSellers = () => api.get(url.GET_SELLERS, '');
@@ -449,44 +447,44 @@ export const getSellers = () => api.get(url.GET_SELLERS, '');
 export const getTaskList = () => api.get(url.GET_TASK_LIST, '');
 
 // add Task
-export const addNewTask = (task : any) => api.create(url.ADD_NEW_TASK, task);
+export const addNewTask = (task: any) => api.create(url.ADD_NEW_TASK, task);
 
 // update Task
-export const updateTask = (task : any) => api.update(url.UPDATE_TASK, task);
+export const updateTask = (task: any) => api.update(url.UPDATE_TASK, task);
 
 // delete Task
-export const deleteTask = (task : any) => api.delete(url.DELETE_TASK, { headers: { task }});
+export const deleteTask = (task: any) => api.delete(url.DELETE_TASK, { headers: { task } });
 
 // Kanban Board
 export const getTasks = () => api.get(url.GET_TASKS, "");
 export const addNewTasks = (card: any) => api.create(url.ADD_TASKS, card)
 export const updateTasks = (card: any) => api.put(url.UPDATE_TASKS, card)
-export const deleteTasks = (card: any) => api.delete(url.DELETE_TASKS, { headers: {card} })
+export const deleteTasks = (card: any) => api.delete(url.DELETE_TASKS, { headers: { card } })
 
 // CRM
 // get Contacts
 export const getContacts = () => api.get(url.GET_CONTACTS, '');
 
 // add Contact
-export const addNewContact = (contact : any) => api.create(url.ADD_NEW_CONTACT, contact);
+export const addNewContact = (contact: any) => api.create(url.ADD_NEW_CONTACT, contact);
 
 // update Contact
-export const updateContact = (contact : any) => api.update(url.UPDATE_CONTACT, contact);
+export const updateContact = (contact: any) => api.update(url.UPDATE_CONTACT, contact);
 
 // delete Contact
-export const deleteContact = (contact : any) => api.delete(url.DELETE_CONTACT, { headers: { contact }});
+export const deleteContact = (contact: any) => api.delete(url.DELETE_CONTACT, { headers: { contact } });
 
 // get Companies
 export const getCompanies = () => api.get(url.GET_COMPANIES, '');
 
 // add Companies
-export const addNewCompanies = (company : any) => api.create(url.ADD_NEW_COMPANIES, company);
+export const addNewCompanies = (company: any) => api.create(url.ADD_NEW_COMPANIES, company);
 
 // update Companies
-export const updateCompanies = (company : any) => api.update(url.UPDATE_COMPANIES, company);
+export const updateCompanies = (company: any) => api.update(url.UPDATE_COMPANIES, company);
 
 // delete Companies
-export const deleteCompanies = (company : any) => api.delete(url.DELETE_COMPANIES, { headers: {company}});
+export const deleteCompanies = (company: any) => api.delete(url.DELETE_COMPANIES, { headers: { company } });
 
 // get Deals
 export const getDeals = () => api.get(url.GET_DEALS, '');
@@ -495,13 +493,13 @@ export const getDeals = () => api.get(url.GET_DEALS, '');
 export const getLeads = () => api.get(url.GET_LEADS, '');
 
 // add Lead
-export const addNewLead = (lead : any) => api.create(url.ADD_NEW_LEAD, lead);
+export const addNewLead = (lead: any) => api.create(url.ADD_NEW_LEAD, lead);
 
 // update Lead
-export const updateLead = (lead : any) => api.update(url.UPDATE_LEAD, lead);
+export const updateLead = (lead: any) => api.update(url.UPDATE_LEAD, lead);
 
 // delete Lead
-export const deleteLead = (lead : any) => api.delete(url.DELETE_LEAD, { headers: {lead}});
+export const deleteLead = (lead: any) => api.delete(url.DELETE_LEAD, { headers: { lead } });
 
 // Crypto
 // Transation
@@ -515,26 +513,26 @@ export const getOrderList = () => api.get(url.GET_ORDRER_LIST, '');
 export const getInvoices = () => api.get(url.GET_INVOICES, '');
 
 // add Invoice
-export const addNewInvoice = (invoice : any) => api.create(url.ADD_NEW_INVOICE, invoice);
+export const addNewInvoice = (invoice: any) => api.create(url.ADD_NEW_INVOICE, invoice);
 
 // update Invoice
-export const updateInvoice = (invoice : any) => api.update(url.UPDATE_INVOICE + '/' + invoice._id, invoice);
+export const updateInvoice = (invoice: any) => api.update(url.UPDATE_INVOICE + '/' + invoice._id, invoice);
 
 // delete Invoice
-export const deleteInvoice = (invoice : any) => api.delete(url.DELETE_INVOICE + '/' + invoice);
+export const deleteInvoice = (invoice: any) => api.delete(url.DELETE_INVOICE + '/' + invoice);
 
 // Support Tickets 
 // Tickets
 export const getTicketsList = () => api.get(url.GET_TICKETS_LIST, '');
 
 // add Tickets 
-export const addNewTicket = (ticket : any) => api.create(url.ADD_NEW_TICKET, ticket);
+export const addNewTicket = (ticket: any) => api.create(url.ADD_NEW_TICKET, ticket);
 
 // update Tickets 
-export const updateTicket = (ticket : any) => api.update(url.UPDATE_TICKET, ticket);
+export const updateTicket = (ticket: any) => api.update(url.UPDATE_TICKET, ticket);
 
 // delete Tickets 
-export const deleteTicket = (ticket : any) => api.delete(url.DELETE_TICKET, { headers: {ticket}});
+export const deleteTicket = (ticket: any) => api.delete(url.DELETE_TICKET, { headers: { ticket } });
 
 // Dashboard Analytics
 
@@ -625,33 +623,33 @@ export const getYearMarketplaceData = () => api.get(url.GET_YEARMARKETPLACE_DATA
 
 // Pages > Team
 export const getTeamData = () => api.get(url.GET_TEAMDATA, '');
-export const deleteTeamData = (team : any) => api.delete(url.DELETE_TEAMDATA, { headers: { team } });
-export const addTeamData = (team : any) => api.create(url.ADD_NEW_TEAMDATA, team);
-export const updateTeamData = (team : any) => api.put(url.UPDATE_TEAMDATA, team);
+export const deleteTeamData = (team: any) => api.delete(url.DELETE_TEAMDATA, { headers: { team } });
+export const addTeamData = (team: any) => api.create(url.ADD_NEW_TEAMDATA, team);
+export const updateTeamData = (team: any) => api.put(url.UPDATE_TEAMDATA, team);
 
 // File Manager
 
 // Folder
 export const getFolders = () => api.get(url.GET_FOLDERS, '');
-export const deleteFolder = (folder : any) => api.delete(url.DELETE_FOLDER, { headers: { folder } });
-export const addNewFolder = (folder : any) => api.create(url.ADD_NEW_FOLDER, folder);
-export const updateFolder = (folder : any) => api.put(url.UPDATE_FOLDER, folder);
+export const deleteFolder = (folder: any) => api.delete(url.DELETE_FOLDER, { headers: { folder } });
+export const addNewFolder = (folder: any) => api.create(url.ADD_NEW_FOLDER, folder);
+export const updateFolder = (folder: any) => api.put(url.UPDATE_FOLDER, folder);
 
 // File
 export const getFiles = () => api.get(url.GET_FILES, '');
-export const deleteFile = (file : any) => api.delete(url.DELETE_FILE, { headers: { file } });
-export const addNewFile = (file : any) => api.create(url.ADD_NEW_FILE, file);
-export const updateFile = (file : any) => api.put(url.UPDATE_FILE, file);
+export const deleteFile = (file: any) => api.delete(url.DELETE_FILE, { headers: { file } });
+export const addNewFile = (file: any) => api.create(url.ADD_NEW_FILE, file);
+export const updateFile = (file: any) => api.put(url.UPDATE_FILE, file);
 
 // To Do
 export const getTodos = () => api.get(url.GET_TODOS, '');
-export const deleteTodo = (todo : any) => api.delete(url.DELETE_TODO, { headers: { todo } });
-export const addNewTodo = (todo : any) => api.create(url.ADD_NEW_TODO, todo);
-export const updateTodo = (todo : any) => api.put(url.UPDATE_TODO, todo);
+export const deleteTodo = (todo: any) => api.delete(url.DELETE_TODO, { headers: { todo } });
+export const addNewTodo = (todo: any) => api.create(url.ADD_NEW_TODO, todo);
+export const updateTodo = (todo: any) => api.put(url.UPDATE_TODO, todo);
 
 // To do Project
 export const getProjects = () => api.get(url.GET_PROJECTS, '');
-export const addNewProject = (project : any) => api.create(url.ADD_NEW_TODO_PROJECT, project);
+export const addNewProject = (project: any) => api.create(url.ADD_NEW_TODO_PROJECT, project);
 
 //API Key
 export const getAPIKey = () => api.get(url.GET_API_KEY, '');
@@ -664,14 +662,14 @@ export const deleteJobApplicationList = (job: any) => api.delete(url.DELETE_APPL
 
 // candidate list
 export const getJobCandidateList = () => api.get(url.GET_CANDIDATE, '');
-export const addJobCandidate = (candidate : any) => api.create(url.ADD_NEW_CANDIDATE, candidate);
-export const updateJobCandidate = (candidate : any) => api.update(url.UPDATE_CANDIDATE, candidate);
-export const deleteJobCandidate = (candidate : any) => api.delete(url.DELETE_CANDIDATE, { headers: {candidate} });
+export const addJobCandidate = (candidate: any) => api.create(url.ADD_NEW_CANDIDATE, candidate);
+export const updateJobCandidate = (candidate: any) => api.update(url.UPDATE_CANDIDATE, candidate);
+export const deleteJobCandidate = (candidate: any) => api.delete(url.DELETE_CANDIDATE, { headers: { candidate } });
 
 // category list
 export const getcategoryList = () => api.get(url.GET_CATEGORY_LIST, '');
-export const addcategoryList = (category : any) => api.create(url.ADD_CATEGORY_LIST, category);
+export const addcategoryList = (category: any) => api.create(url.ADD_CATEGORY_LIST, category);
 
 // grid
 export const getCandidateGrid = () => api.get(url.GET_CANDIDATE_GRID, '');
-export const addCandidateGrid = (category : any) => api.create(url.ADD_CANDIDATE_GRID, category);
+export const addCandidateGrid = (category: any) => api.create(url.ADD_CANDIDATE_GRID, category);

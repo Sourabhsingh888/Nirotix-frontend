@@ -1,4 +1,3 @@
-// src/slices/webhook/slice.ts
 import { createSlice } from "@reduxjs/toolkit";
 import { updateWebhookApi, getWebhookApi } from "./thunk";
 
@@ -14,7 +13,7 @@ interface WebhookState {
 }
 
 const initialState: WebhookState = {
-  url: "", // initially empty
+  url: "",
   fetchState: { loading: false, success: false, error: null },
 };
 
@@ -38,7 +37,7 @@ const webhookSlice = createSlice({
       .addCase(updateWebhookApi.fulfilled, (state, action) => {
         state.fetchState.loading = false;
         state.fetchState.success = true;
-        state.url = action.payload; // payload = string (url)
+        state.url = action.payload;
       })
       .addCase(updateWebhookApi.rejected, (state, action) => {
         state.fetchState.loading = false;
@@ -46,7 +45,7 @@ const webhookSlice = createSlice({
         state.fetchState.error = action.payload as string;
       });
 
-    // ---- GET WEBHOOK ----
+    // GET WEBHOOK 
     builder
       .addCase(getWebhookApi.pending, (state) => {
         state.fetchState.loading = true;
@@ -56,7 +55,7 @@ const webhookSlice = createSlice({
       .addCase(getWebhookApi.fulfilled, (state, action) => {
         state.fetchState.loading = false;
         state.fetchState.success = true;
-        state.url = action.payload?.url || ""; // payload = { url: string }
+        state.url = action.payload?.url || "";
       })
       .addCase(getWebhookApi.rejected, (state, action) => {
         state.fetchState.loading = false;

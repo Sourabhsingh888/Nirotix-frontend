@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
-   getWhitelistedIpApi,
+  getWhitelistedIpApi,
   addWhitelistedIpApi,
   deleteWhitelistedIpApi,
 } from "./thunk";
 
-// ---------------- Types ----------------
+//Types 
 export interface Whitelist {
   id: number | string;
   ip_address: string;
@@ -49,7 +49,7 @@ const initialState: WhitelistState = {
   deleteState: { ...initialRequestState },
 };
 
-// ---------------- Slice ----------------
+//  Slice -
 const WhitelistSlice = createSlice({
   name: "whitelist",
   initialState,
@@ -65,7 +65,7 @@ const WhitelistSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // ---- Fetch ----
+    // Fetch 
     builder
       .addCase(getWhitelistedIpApi.pending, (state) => {
         state.fetchState.loading = true;
@@ -88,7 +88,7 @@ const WhitelistSlice = createSlice({
           "Failed to fetch whitelist";
       });
 
-    // ---- Add ----
+    // Add 
     builder
       .addCase(addWhitelistedIpApi.pending, (state) => {
         state.addState.loading = true;
@@ -105,7 +105,7 @@ const WhitelistSlice = createSlice({
           "Failed to add whitelist";
       });
 
-    // ---- Delete ----
+    // Delete 
     builder
       .addCase(deleteWhitelistedIpApi.pending, (state) => {
         state.deleteState.loading = true;
@@ -128,7 +128,7 @@ const WhitelistSlice = createSlice({
   },
 });
 
-export const { resetFetchState, resetAddState, resetDeleteState , } =
+export const { resetFetchState, resetAddState, resetDeleteState, } =
   WhitelistSlice.actions;
 
 export default WhitelistSlice.reducer;

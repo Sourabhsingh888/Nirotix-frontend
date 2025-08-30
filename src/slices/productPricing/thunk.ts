@@ -1,4 +1,4 @@
-// src/store/productPricing/thunk.ts
+
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -11,8 +11,7 @@ import {
   deleteProductPricingList as deleteProductPricingApi,
 } from "../../helpers/auth_api_helper";
 
-// ---- GET ALL ----
-// src/store/productPricing/thunk.ts
+//  GET ALL 
 export const getProductPricing = createAsyncThunk(
   "productPricing/getList",
   async (
@@ -30,8 +29,8 @@ export const getProductPricing = createAsyncThunk(
     try {
       const response = await getProductPricingListApi(offset, limit, searchValue);
 
-      // 👇 API ke structure ke hisab se normalize karo
-      const list = response?.data || [];  // <-- agar "items" ke andar hai to response?.data?.items
+
+      const list = response?.data || [];
 
       return {
         data: list,
@@ -54,7 +53,7 @@ export const getProductPricingById = createAsyncThunk(
       const response = await getProductPricingByidApi(id);
       console.log(response);
       return response.data;
-      
+
     } catch (error: any) {
       toast.error("Failed to load product pricing", { autoClose: 3000 });
       return rejectWithValue(error?.response?.data || error.message);
@@ -76,13 +75,13 @@ export const addProductPricing = createAsyncThunk(
       console.log(error);
       const errorMessage =
         error?.message || "Failed to add product pricing";
-       if (error.statusCode === 0) {
-         toast.warning(errorMessage, { autoClose: 3000 });
-       } else {
-         toast.error(errorMessage, { autoClose: 3000 });
-       }
+      if (error.statusCode === 0) {
+        toast.warning(errorMessage, { autoClose: 3000 });
+      } else {
+        toast.error(errorMessage, { autoClose: 3000 });
+      }
       return rejectWithValue(
-      error?.message || { message: errorMessage }
+        error?.message || { message: errorMessage }
       );
     }
   }
@@ -105,7 +104,7 @@ export const updateProductPricing = createAsyncThunk(
       return response;
     } catch (error: any) {
       console.log(error?.message);
-      
+
       toast.error(error?.message || "Failed to update product pricing", {
         autoClose: 3000,
       });

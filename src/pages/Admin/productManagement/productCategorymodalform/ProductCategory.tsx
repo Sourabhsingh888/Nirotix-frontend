@@ -24,7 +24,7 @@ const AddCategoryForm: React.FC<Props> = ({
 }) => {
   return (
     <div className="row g-3">
-      {/* Name Field */}
+
       <Col xxl={12}>
         <Label htmlFor="categoryName" className="form-label">
           Name
@@ -41,7 +41,7 @@ const AddCategoryForm: React.FC<Props> = ({
         {errors.name && <FormFeedback>{errors.name}</FormFeedback>}
       </Col>
 
-      {/* Status Field */}
+
       <Col xxl={12}>
         <Label className="form-label" htmlFor="status-active">
           Status

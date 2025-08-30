@@ -88,7 +88,6 @@ const MessageSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // ---- Fetch Messages ----
     builder
       .addCase(getMessagesApi.pending, (state) => {
         state.fetchState.loading = true;
@@ -150,28 +149,28 @@ const MessageSlice = createSlice({
 
 
     builder
-  .addCase(updateMessageApi.pending, (state) => {
-    state.updateState.loading = true;
-    state.updateState.success = false;
-    state.updateState.error = null;
-  })
-  .addCase(updateMessageApi.fulfilled, (state, action: PayloadAction<any>) => {
-    state.updateState.loading = false;
-    state.updateState.success = true;
-    
-    const updated = action.payload?.data || action.payload;
-    if (!updated?.id) return;
-    
-    const index = state.list.findIndex((m) => m.id === updated.id);
-    if (index !== -1) {
-      state.list[index] = { ...state.list[index], ...updated }; // 👈 safe merge
-    }
-  })
-  .addCase(updateMessageApi.rejected, (state, action) => {
-    state.updateState.loading = false;
-    state.updateState.error =
-      (action.payload as string) || action.error.message || "Failed to update message";
-  });
+      .addCase(updateMessageApi.pending, (state) => {
+        state.updateState.loading = true;
+        state.updateState.success = false;
+        state.updateState.error = null;
+      })
+      .addCase(updateMessageApi.fulfilled, (state, action: PayloadAction<any>) => {
+        state.updateState.loading = false;
+        state.updateState.success = true;
+
+        const updated = action.payload?.data || action.payload;
+        if (!updated?.id) return;
+
+        const index = state.list.findIndex((m) => m.id === updated.id);
+        if (index !== -1) {
+          state.list[index] = { ...state.list[index], ...updated }; // 👈 safe merge
+        }
+      })
+      .addCase(updateMessageApi.rejected, (state, action) => {
+        state.updateState.loading = false;
+        state.updateState.error =
+          (action.payload as string) || action.error.message || "Failed to update message";
+      });
 
 
     // ---- Delete Message ----
@@ -196,31 +195,28 @@ const MessageSlice = createSlice({
       });
 
     // ---- Change Status ----
-   builder
-  .addCase(changeMessageStatusApi.pending, (state) => {
-    state.statusState.loading = true;
-    state.statusState.success = false;
-    state.statusState.error = null;
-  })
-  .addCase(changeMessageStatusApi.fulfilled, (state, action) => {
-    state.statusState.loading = false;
-    state.statusState.success = true;
+    builder
+      .addCase(changeMessageStatusApi.pending, (state) => {
+        state.statusState.loading = true;
+        state.statusState.success = false;
+        state.statusState.error = null;
+      })
+      .addCase(changeMessageStatusApi.fulfilled, (state, action) => {
+        state.statusState.loading = false;
+        state.statusState.success = true;
+        const updated = action.payload;
+        if (!updated?.id) return;
 
-    // backend se jo data aaya hai (id + status)
-    const updated = action.payload; // { id, status }
-    if (!updated?.id) return;
-
-    // list me find karke sirf status update karo
-    const index = state.list.findIndex((m) => m.id.toString() === updated.id.toString());
-    if (index !== -1) {
-      state.list[index].status = updated.status;
-    }
-  })
-  .addCase(changeMessageStatusApi.rejected, (state, action) => {
-    state.statusState.loading = false;
-    state.statusState.error =
-      (action.payload as string) || action.error.message || "Failed to change status";
-  });
+        const index = state.list.findIndex((m) => m.id.toString() === updated.id.toString());
+        if (index !== -1) {
+          state.list[index].status = updated.status;
+        }
+      })
+      .addCase(changeMessageStatusApi.rejected, (state, action) => {
+        state.statusState.loading = false;
+        state.statusState.error =
+          (action.payload as string) || action.error.message || "Failed to change status";
+      });
 
     // ---- Get Message by ID ----
     builder

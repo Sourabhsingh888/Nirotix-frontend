@@ -135,7 +135,7 @@ try {
   if (storedAuth) {
     const parsed = JSON.parse(storedAuth);
     role = parsed?.user?.role || parsed?.role || null;
-    
+
   }
 } catch (err) {
   console.error("Error parsing authUser from sessionStorage", err);
@@ -150,23 +150,22 @@ const roleFallbackRoutes = (role: string) => {
       { path: "*", component: <Navigate to="/admin-dashboard" /> },
     ];
   }
- if (role === "user") {
-   return [
-     { path: "/", exact: true, component: <Navigate to="/user-dashboard" /> },
-     { path: "*", component: <Navigate to="/user-dashboard" /> },
-   ];
+  if (role === "user") {
+    return [
+      { path: "/", exact: true, component: <Navigate to="/user-dashboard" /> },
+      { path: "*", component: <Navigate to="/user-dashboard" /> },
+    ];
   }
-   return [{ path: "*", component: <Navigate to="/login" /> }];
+  return [{ path: "*", component: <Navigate to="/login" /> }];
 
 };
 
 // ============================== Admin related Routes  ===============================
 
-  //Dashboard Route
+//Dashboard Route
 const adminRoutes = [
   { path: "/admin-dashboard", component: <DashboardPage /> },
 
-  // Management section
 
   //Product Management Route
   {
@@ -230,9 +229,9 @@ const adminRoutes = [
 
 ];
 
-  // ============================== User related Routes  ===============================
+// ============================== User related Routes  ===============================
 
-  //Dashboard Route
+//Dashboard Route
 const userRoutes = [
   {
     path: "/user-dashboard",
@@ -363,7 +362,7 @@ const userRoutes = [
     path: "/services/fastag",
     component: <FASTag />,
   },
-  { path: "/services/gas", component: <Gas />,},
+  { path: "/services/gas", component: <Gas />, },
   {
     path: "/services/hospital-pathology",
     component: <HospitalPathology />,

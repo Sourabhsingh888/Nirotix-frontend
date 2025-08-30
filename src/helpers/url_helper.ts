@@ -1,4 +1,4 @@
-export const Image_URL="https://repaybackhand.onrender.com"
+export const Image_URL = "https://repaybackhand.onrender.com"
 //REGISTER
 export const POST_REGISTER = "/api/v1/register";
 
@@ -77,8 +77,6 @@ export const MESSAGE_API_STATUS_CHANGE = "api/v1/msg-management/msg-apis/change-
 
 
 
-
-
 //user dashboard
 
 //White Listed IP
@@ -87,12 +85,9 @@ export const ADD_WHITELISTED_IP = "api/v1/developer-api/whitelisted-ip/add";
 export const DELETE_WHITELISTED_IP = "api/v1/developer-api/whitelisted-ip/delete";
 // export const CHANGE_WHITELISTED_IP = "api/v1/developerApi/whitelisted/changestatus";
 
-
-
 //webhook 
 export const UPDATE_WEBHOOK = "api/v1/developer-api/webhook/update";
 export const GET_WEBHOOK = "api/v1/developer-api/webhook/get-webhook";
-
 
 //Api & key
 export const GET_API_KEYS = "api/v1/developer-api/tokens/get-list";
@@ -101,7 +96,6 @@ export const CHANGE_API_KEY = "api/v1/developer-api/tokens/status";
 
 //userdashboard
 export const GET_WALLET = "api/v1/wallet-management/wallet";
-
 
 // Orders
 export const GET_ORDERS = "/order";

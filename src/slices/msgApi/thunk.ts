@@ -62,7 +62,7 @@ export const addMessageApi = createAsyncThunk(
       });
       return response;
     } catch (error: any) {
-       const errorMsg = error.response?.data?.message || error.message || "Failed to add message";
+      const errorMsg = error.response?.data?.message || error.message || "Failed to add message";
       toast.error(errorMsg, { autoClose: 3000 });
       return rejectWithValue(errorMsg);
     }
@@ -125,7 +125,7 @@ export const deleteMessageApi = createAsyncThunk(
       });
       return response;
     } catch (error: any) {
-    const errorMsg = error.response?.data?.message || error.message || "Failed to delete message";
+      const errorMsg = error.response?.data?.message || error.message || "Failed to delete message";
       toast.error(errorMsg, { autoClose: 3000 });
       return rejectWithValue(errorMsg);
     }
@@ -143,8 +143,7 @@ export const changeMessageStatusApi = createAsyncThunk(
         autoClose: 3000,
       });
 
-      // sirf updated record ka data return karo
-      return response.data; // { id: string, status: "active" | "inactive" }
+      return response.data;
 
     } catch (error: any) {
       const errorMsg =

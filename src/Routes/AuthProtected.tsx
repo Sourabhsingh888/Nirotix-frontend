@@ -137,17 +137,17 @@ const AuthProtected: React.FC<AuthProtectedProps> = ({
     setLoading(false);
   }, [dispatch, token]);
 
-  // ⏳ Show nothing until role/token loaded
+  //  Show nothing until role/token loaded
   if (loading) {
     return null;
   }
 
-  // ⛔ Redirect if no token or expired
+  //  Redirect if no token or expired
   if (!token || isTokenExpired(token)) {
     return <Navigate to="/login" replace />;
   }
 
-  // 🔒 Role check only after role is known
+  //  Role check only after role is known
   if (allowedRoles.length > 0 && (!role || !allowedRoles.includes(role))) {
     return <Navigate to="/unauthorized" replace />;
   }

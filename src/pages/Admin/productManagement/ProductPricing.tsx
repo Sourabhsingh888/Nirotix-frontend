@@ -49,12 +49,12 @@ const ProductPricing: React.FC = () => {
       text: "Once deleted, you will not be able to recover this data!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#20c997", // green
-      cancelButtonColor: "#f46a6a", // red
+      confirmButtonColor: "#20c997",
+      cancelButtonColor: "#f46a6a",
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "Cancel",
       preConfirm: () => {
-        Swal.showLoading(); // 🔄 show loader after confirm
+        Swal.showLoading();
         return dispatch(deleteProductPricing(id)).unwrap()
           .catch(() => {
           });
@@ -82,11 +82,10 @@ const ProductPricing: React.FC = () => {
 
   const totalPages = Math.ceil(recordsFiltered / itemsPerPage);
 
-  // ✅ Fetch product pricing list
   useEffect(() => {
     dispatch(
       getProductPricing({
-        offset: (currentPage - 1), // proper offset
+        offset: (currentPage - 1),
         limit: itemsPerPage,
         searchValue: searchValue.trim(),
       })
@@ -94,9 +93,6 @@ const ProductPricing: React.FC = () => {
   }, [dispatch, currentPage, itemsPerPage, searchValue]);
 
 
-
-
-  // In ProductPricing.tsx
   const handleUpdateSuccess = () => {
     dispatch(
       getProductPricing({
@@ -117,7 +113,7 @@ const ProductPricing: React.FC = () => {
             <h5 className="mb-0">Product Price List</h5>
           </CardHeader>
 
-          {/* Filters */}
+
           <CardBody className="border-bottom border-bottom-dashed">
             <Row className="align-items-end">
               <Col md={6}>
@@ -141,13 +137,13 @@ const ProductPricing: React.FC = () => {
             </Row>
           </CardBody>
 
-          {/* Add Modal */}
+
           <ProductPricingModal
             isOpen={isAddModalOpen}
             toggle={toggleAddModal}
           />
 
-          {/* Edit Modal */}
+
           {selectedItem && (
             <UpdateProductPricing
               isOpen={isEditModalOpen}
@@ -158,7 +154,7 @@ const ProductPricing: React.FC = () => {
 
           )}
 
-          {/* Table */}
+
           <CardBody>
             {fetchState.loading ? (
               <CategorySkeletonRow
@@ -220,7 +216,6 @@ const ProductPricing: React.FC = () => {
                   </Table>
                 </div>
 
-                {/* Pagination */}
                 <Row className="align-items-center mt-4 d-flex justify-content-between">
                   <Col md="auto">
                     <div className="text-muted">

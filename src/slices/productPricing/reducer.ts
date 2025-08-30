@@ -14,7 +14,6 @@ export interface ProductPricing {
   currency: string;
 }
 
-// If API response includes pagination metadata
 export interface ProductResponse {
   data: ProductPricing[];
   recordsTotal: number;
@@ -29,11 +28,11 @@ interface RequestState {
 
 interface ProductPricingState {
   list: ProductPricing[];
-  selected: ProductPricing | null; // ✅ Added for fetch by ID
+  selected: ProductPricing | null;
   recordsTotal: number;
   recordsFiltered: number;
   fetchState: RequestState;
-  detailState: RequestState; // ✅ for getById
+  detailState: RequestState;
   addState: RequestState;
   updateState: RequestState;
   deleteState: RequestState;
@@ -47,11 +46,11 @@ const initialRequestState: RequestState = {
 
 const initialState: ProductPricingState = {
   list: [],
-  selected: null, // ✅ initialize
+  selected: null,
   recordsTotal: 0,
   recordsFiltered: 0,
   fetchState: { ...initialRequestState },
-  detailState: { ...initialRequestState }, // ✅ added
+  detailState: { ...initialRequestState },
   addState: { ...initialRequestState },
   updateState: { ...initialRequestState },
   deleteState: { ...initialRequestState },
@@ -74,12 +73,10 @@ const ProductPricingSlice = createSlice({
       state.fetchState = { ...initialRequestState };
     },
     resetSelected: (state) => {
-      // ✅ for clearing single record
       state.selected = null;
     },
   },
   extraReducers: (builder) => {
-    // Fetch Products
     builder
       .addCase(getProductPricing.pending, (state) => {
         state.fetchState.loading = true;
@@ -112,9 +109,9 @@ const ProductPricingSlice = createSlice({
       .addCase(
         getProductPricingById.fulfilled,
         (state, action: PayloadAction<ProductPricing>) => {
-        state.detailState.loading = false;
-        state.detailState.success = true;
-          state.selected = action.payload; // ✅ store single record
+          state.detailState.loading = false;
+          state.detailState.success = true;
+          state.selected = action.payload;
         }
       )
       .addCase(getProductPricingById.rejected, (state, action) => {
@@ -203,7 +200,7 @@ export const {
   resetUpdateState,
   resetDeleteState,
   resetFetchState,
-  resetSelected, // ✅ export new reset
+  resetSelected,
 } = ProductPricingSlice.actions;
 
 export default ProductPricingSlice.reducer;

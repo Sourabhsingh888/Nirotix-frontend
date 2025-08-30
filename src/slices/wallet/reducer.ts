@@ -43,7 +43,6 @@ const walletSlice = createSlice({
       })
       .addCase(getWalletApi.fulfilled, (state, action) => {
         state.loading = false;
-        // adjust according to API response shape
         state.wallet = action.payload.data ?? action.payload;
       })
       .addCase(getWalletApi.rejected, (state, action) => {

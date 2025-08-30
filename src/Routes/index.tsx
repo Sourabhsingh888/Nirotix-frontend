@@ -38,7 +38,7 @@ const Index = () => {
             />
           ))}
         </Route>
-        {/* 🔁 Catch-all Fallback Route — MUST be last */}
+        {/*  Catch-all Fallback Route — MUST be last */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </React.Fragment>

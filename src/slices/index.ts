@@ -19,7 +19,7 @@ import chatReducer from "./chat/reducer";
 import ProductCategoryReducer from "./productCategory/reducer";
 
 // add product
-import AddProductreducer  from "./addProduct/reducer";
+import AddProductreducer from "./addProduct/reducer";
 
 //Pricing
 import ProductPricingReducer from "./productPricing/reducer";

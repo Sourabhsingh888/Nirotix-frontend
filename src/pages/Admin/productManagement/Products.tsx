@@ -49,7 +49,7 @@ const Products = () => {
   const toggleAddModal = () => setIsAddModalOpen(!isAddModalOpen);
   const toggleUpdateModal = () => setIsUpdateModalOpen(!isUpdateModalOpen);
 
-  // Fetch products from API
+
   useEffect(() => {
     dispatch(
       getProducts({
@@ -149,42 +149,22 @@ const Products = () => {
               </Col>
             </Row>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             <Row>
               {productStatus && (
                 <>
-                  {/* ✅ Results Count full width */}
                   <Col xs={12}>
                     <div className="mt-3">
                       <strong>{recordsFiltered || 0}</strong> results found
                     </div>
                   </Col>
 
-                  {/* ✅ Status filter box (1/3 of 12 columns) */}
                   <Col xs={12} md={3} className="mt-2">
                     <div
                       className="border border-dashed rounded p-2 d-flex align-items-center"
                       style={{ borderWidth: "2px" }}
                     >
-                      {/* Status label */}
                       <strong className="me-2">Status:</strong>
 
-                      {/* Badge */}
                       <Badge
                         pill
                         className="px-3 py-2 me-2 d-flex align-items-center"
@@ -344,7 +324,7 @@ const Products = () => {
                 </div>
 
                 <Row className="align-items-center mt-4 d-flex justify-content-between">
-                  {/* Left Side - Showing Entries */}
+
                   <Col md="auto">
                     <div className="text-muted">
                       Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
@@ -356,7 +336,6 @@ const Products = () => {
                     </div>
                   </Col>
 
-                  {/* Right Side - Pagination (only if total records > itemsPerPage) */}
                   <Col md="auto">
                     {(recordsFiltered || recordsTotal) > itemsPerPage && (
                       <Pagination className="mb-0">
