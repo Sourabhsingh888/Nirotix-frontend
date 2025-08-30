@@ -46,7 +46,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
       keyboard={false}
     >
       <ModalHeader
-        className={headerClass}
+        className={`${headerClass} modal-title`}
 
         close={
           <button
@@ -57,7 +57,8 @@ const BaseModal: React.FC<BaseModalProps> = ({
           />
         }
       >
-        <h5 className="modal-title">{title}</h5>
+        {/* <h5 className="modal-title">{title}</h5> */}
+        {title}
       </ModalHeader>
 
       <ModalBody>{children}</ModalBody>

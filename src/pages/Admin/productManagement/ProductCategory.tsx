@@ -20,7 +20,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../../Store";
 import Swal from "sweetalert2";
 import BreadCrumb from "../../../Components/Common/BreadCrumb";
-import CategorySkeletonRow from "../../../Components/Common/CategorySkeletonRow";
+// import CategorySkeletonRow from "../../../Components/Common/CategorySkeletonRow";
+import CategorySkeletonRow from "../../../Components/Common/SkeletonWrapper";
 import AddCategoryModal from "../../../Components/modal/admin/admin-sub_modal/AddProductCategoryModal";
 import UpdateCategoryModal from "../../../Components/modal/admin/admin-sub_modal/UpdateCategoryModal";
 import {

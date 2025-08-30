@@ -441,7 +441,7 @@ const authProtectedRoutes = [
   {
     path: "/unauthorized",
     component: <Unauthorized />,
-    allowedRoles: ["admin", "user"], // both can see unauthorized page
+    allowedRoles: ["admin", "user"], 
   },
 
   // Redirects for unknown paths (role-specific)

@@ -14,7 +14,7 @@ import {
   PaginationLink,
 } from "reactstrap";
 import BreadCrumb from "../../../Components/Common/BreadCrumb";
-import CategorySkeletonRow from "../../../Components/Common/CategorySkeletonRow";
+import CategorySkeletonRow from "../../../Components/Common/SkeletonWrapper";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../../Store";
 import Swal from "sweetalert2";
