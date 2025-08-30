@@ -8,7 +8,7 @@ import {
   getProductCategoryById,
 } from "../../../../slices/productCategory/thunk";
 import { RootState, AppDispatch } from "../../../../Store";
-import CategorySkeletonRow from "../../../Common/CategorySkeletonRow";
+import CategorySkeletonRow from "../../../Common/SkeletonWrapper";
 
 interface UpdateCategoryModalProps {
   isOpen: boolean;

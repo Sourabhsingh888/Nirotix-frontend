@@ -9,7 +9,7 @@ import {
 } from "../../../../slices/productPricing/thunk";
 import { getProducts } from "../../../../slices/addProduct/thunk";
 import { RootState, AppDispatch } from "../../../../Store";
-import CategorySkeletonRow from "../../../Common/CategorySkeletonRow";
+import CategorySkeletonRow from "../../../Common/SkeletonWrapper";
 
 interface UpdateProductPricingModalProps {
   isOpen: boolean;

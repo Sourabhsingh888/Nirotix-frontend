@@ -157,14 +157,13 @@ const Products = () => {
                       <strong>{recordsFiltered || 0}</strong> results found
                     </div>
                   </Col>
-
-                  <Col xs={12} md={3} className="mt-2">
+                  <Col xs={12} md={2} className="mt-2 d-flex align-items-center">
+                    {/* Box with status */}
                     <div
-                      className="border border-dashed rounded p-2 d-flex align-items-center"
+                      className="border border-dashed rounded p-2 d-flex align-items-center flex-grow-1"
                       style={{ borderWidth: "2px" }}
                     >
                       <strong className="me-2">Status:</strong>
-
                       <Badge
                         pill
                         className="px-3 py-2 me-2 d-flex align-items-center"
@@ -174,17 +173,17 @@ const Products = () => {
                         {productStatus.label}
                         <i className="ri-close-line ms-1"></i>
                       </Badge>
-
-                      {/* Clear Button */}
-                      <Button
-                        color="link"
-                        size="sm"
-                        className="text-danger p-0 d-flex align-items-center"
-                        onClick={clearStatus}
-                      >
-                        <i className="ri-delete-bin-line me-1"></i> Clear
-                      </Button>
                     </div>
+
+                    {/* Clear button outside */}
+                    <Button
+                      color="link"
+                      size="sm"
+                      className="text-danger p-0 ms-2 d-flex align-items-center"
+                      onClick={clearStatus}
+                    >
+                      <i className="ri-delete-bin-line me-1"></i> Clear
+                    </Button>
                   </Col>
 
 

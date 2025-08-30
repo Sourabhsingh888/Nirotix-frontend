@@ -67,7 +67,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
         <Button color="primary" onClick={onSubmit} disabled={isSubmitDisabled}>
           {submitLabel || "Submit"}
         </Button>
-        <Button color="secondary" onClick={handleCancelClick}>
+        <Button color="danger" onClick={handleCancelClick}>
           {cancelLabel || "Cancel"}
         </Button>
       </ModalFooter>

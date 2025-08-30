@@ -20,7 +20,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../../Store";
 import Swal from "sweetalert2";
 import BreadCrumb from "../../../Components/Common/BreadCrumb";
-// import CategorySkeletonRow from "../../../Components/Common/CategorySkeletonRow";
 import CategorySkeletonRow from "../../../Components/Common/SkeletonWrapper";
 import AddCategoryModal from "../../../Components/modal/admin/admin-sub_modal/AddProductCategoryModal";
 import UpdateCategoryModal from "../../../Components/modal/admin/admin-sub_modal/UpdateCategoryModal";
@@ -162,16 +161,13 @@ const ProductCategoryPage = () => {
                     </div>
                   </Col>
 
-
-                  <Col xs={12} md={3} className="mt-2">
+                  <Col xs={12} md={2} className="mt-2 d-flex align-items-center">
+                    {/* Box with status */}
                     <div
-                      className="border border-dashed rounded p-2 d-flex align-items-center"
+                      className="border border-dashed rounded p-2 d-flex align-items-center flex-grow-1"
                       style={{ borderWidth: "2px" }}
                     >
-
                       <strong className="me-2">Status:</strong>
-
-
                       <Badge
                         pill
                         className="px-3 py-2 me-2 d-flex align-items-center"
@@ -181,18 +177,19 @@ const ProductCategoryPage = () => {
                         {categoryStatus.label}
                         <i className="ri-close-line ms-1"></i>
                       </Badge>
-
-
-                      <Button
-                        color="link"
-                        size="sm"
-                        className="text-danger p-0 d-flex align-items-center"
-                        onClick={clearStatus}
-                      >
-                        <i className="ri-delete-bin-line me-1"></i> Clear
-                      </Button>
                     </div>
+
+                    {/* Clear button outside */}
+                    <Button
+                      color="link"
+                      size="sm"
+                      className="text-danger p-0 ms-2 d-flex align-items-center"
+                      onClick={clearStatus}
+                    >
+                      <i className="ri-delete-bin-line me-1"></i> Clear
+                    </Button>
                   </Col>
+
 
 
                 </>
@@ -241,8 +238,8 @@ const ProductCategoryPage = () => {
                           <td>
                             <span
                               className={`badge ${item.status === "Active"
-                                  ? "bg-success-subtle text-success"
-                                  : "bg-danger-subtle text-danger"
+                                ? "bg-success-subtle text-success"
+                                : "bg-danger-subtle text-danger"
                                 }`}
                               style={{ cursor: "pointer" }}
                               onClick={() =>
