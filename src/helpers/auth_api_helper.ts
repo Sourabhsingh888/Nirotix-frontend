@@ -227,7 +227,7 @@ export const updateProductPricingList = (productdata: {
     currency: productdata.currency,
   });
 
-// delete Product
+// delete Productprice
 export const deleteProductPricingList = (id: number | string) => api.delete(`${url.DELETE_PRODUCT_PRICING}/${id}`);
 
 

@@ -57,7 +57,7 @@ const Products = () => {
         limit: itemsPerPage,
         context: "table",
         searchValue: searchValue.trim(),
-        ProductStatus:productStatus?.value || "",
+        ProductStatus: productStatus?.value || "",
       })
     );
   }, [dispatch, productStatus, searchValue, currentPage]);
@@ -86,7 +86,7 @@ const Products = () => {
         Swal.showLoading();
         return dispatch(deleteProduct(id))
           .unwrap()
-          .catch(() => {});
+          .catch(() => { });
       },
     });
   };
@@ -148,19 +148,67 @@ const Products = () => {
                 </Button>
               </Col>
             </Row>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             <Row>
-              {/* ✅ Show selected badges */}
               {productStatus && (
-                <div className="mt-2 d-flex flex-wrap gap-2">
-                  <Badge
-                    pill
-                    className="px-3 py-2"
-                    style={{ cursor: "pointer" }}
-                    onClick={clearStatus}
-                  >
-                    {productStatus.label} <i className="ri-close-line ms-1"></i>
-                  </Badge>
-                </div>
+                <>
+                  {/* ✅ Results Count full width */}
+                  <Col xs={12}>
+                    <div className="mt-3">
+                      <strong>{recordsFiltered || 0}</strong> results found
+                    </div>
+                  </Col>
+
+                  {/* ✅ Status filter box (1/3 of 12 columns) */}
+                  <Col xs={12} md={3} className="mt-2">
+                    <div
+                      className="border border-dashed rounded p-2 d-flex align-items-center"
+                      style={{ borderWidth: "2px" }}
+                    >
+                      {/* Status label */}
+                      <strong className="me-2">Status:</strong>
+
+                      {/* Badge */}
+                      <Badge
+                        pill
+                        className="px-3 py-2 me-2 d-flex align-items-center"
+                        style={{ cursor: "pointer" }}
+                        onClick={clearStatus}
+                      >
+                        {productStatus.label}
+                        <i className="ri-close-line ms-1"></i>
+                      </Badge>
+
+                      {/* Clear Button */}
+                      <Button
+                        color="link"
+                        size="sm"
+                        className="text-danger p-0 d-flex align-items-center"
+                        onClick={clearStatus}
+                      >
+                        <i className="ri-delete-bin-line me-1"></i> Clear
+                      </Button>
+                    </div>
+                  </Col>
+
+
+                </>
               )}
             </Row>
           </CardBody>
@@ -170,7 +218,18 @@ const Products = () => {
             isOpen={isUpdateModalOpen}
             toggle={toggleUpdateModal}
             category={selectedProduct}
+            onSuccess={() => {
+              toggleUpdateModal();
+              dispatch(getProducts({
+                offset: currentPage - 1,
+                limit: itemsPerPage,
+                context: "table",
+                searchValue: searchValue.trim(),
+                ProductStatus: productStatus?.value || "",
+              }));
+            }}
           />
+
 
           <CardBody>
             {fetchState.loading ? (
@@ -231,11 +290,10 @@ const Products = () => {
                             <td>{formatToIST(item.created_at)}</td>
                             <td>
                               <span
-                                className={`badge ${
-                                  item.status === "Active"
-                                    ? "bg-success-subtle text-success"
-                                    : "bg-danger-subtle text-danger"
-                                }`}
+                                className={`badge ${item.status === "Active"
+                                  ? "bg-success-subtle text-success"
+                                  : "bg-danger-subtle text-danger"
+                                  }`}
                                 style={{ cursor: "pointer" }}
                                 onClick={() =>
                                   dispatch(
@@ -247,7 +305,7 @@ const Products = () => {
                                 }
                               >
                                 {statusState.loading &&
-                                statusState.id === item.id ? (
+                                  statusState.id === item.id ? (
                                   <Spinner size="sm" />
                                 ) : (
                                   item.status?.toUpperCase()

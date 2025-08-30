@@ -146,7 +146,7 @@ const ProductPricingSlice = createSlice({
         state.addState.error =
           (action.payload as string) ||
           action.error.message ||
-          "Failed to add product";
+          "Failed to ad product";
       });
 
     // Update Product

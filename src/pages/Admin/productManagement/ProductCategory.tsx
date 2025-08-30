@@ -162,31 +162,39 @@ const ProductCategoryPage = () => {
                     </div>
                   </Col>
 
-                  {/* ✅ Status filter box (1/3 of 12 columns) */}
-                  <Col xs={12} md={2} className="mt-2">
-                    <div className="border border-dashed rounded p-2 align-items-center">
-                      <span>
-                        <strong>Status: </strong>
-                      </span>
-                      <Badge
-                        pill
-                        className="px-3 py-2"
-                        style={{ cursor: "pointer" }}
-                        onClick={clearStatus}
-                      >
-                        {categoryStatus.label}{" "}
-                        <i className="ri-close-line ms-1"></i>
-                      </Badge>
-                    </div>
-                    <Button
-                      color="link"
-                      size="sm"
-                      className="text-danger p-0"
-                      onClick={clearStatus}
-                    >
-                      <i className="ri-delete-bin-line me-1"></i> Clear
-                    </Button>
-                  </Col>
+                {/* ✅ Status filter box (1/3 of 12 columns) */}
+<Col xs={12} md={3} className="mt-2">
+  <div
+    className="border border-dashed rounded p-2 d-flex align-items-center"
+    style={{ borderWidth: "2px" }}
+  >
+    {/* Status label */}
+    <strong className="me-2">Status:</strong>
+
+    {/* Badge */}
+    <Badge
+      pill
+      className="px-3 py-2 me-2 d-flex align-items-center"
+      style={{ cursor: "pointer" }}
+      onClick={clearStatus}
+    >
+      {categoryStatus.label}
+      <i className="ri-close-line ms-1"></i>
+    </Badge>
+
+    {/* Clear Button */}
+    <Button
+      color="link"
+      size="sm"
+      className="text-danger p-0 d-flex align-items-center"
+      onClick={clearStatus}
+    >
+      <i className="ri-delete-bin-line me-1"></i> Clear
+    </Button>
+  </div>
+</Col>
+
+
                 </>
               )}
             </Row>

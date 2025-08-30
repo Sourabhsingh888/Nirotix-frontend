@@ -61,24 +61,24 @@ const ProductPricing: React.FC = () => {
       },
     });
   };
-  
+
   const handleEdit = (id: number | string) => {
     setSelectedItem(id);
     setIsEditModalOpen(true);
   };
 
-function formatToIST(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleString("en-IN", {
-    timeZone: "Asia/Kolkata",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-}
+  function formatToIST(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  }
 
   const totalPages = Math.ceil(recordsFiltered / itemsPerPage);
 
@@ -86,12 +86,26 @@ function formatToIST(dateString: string): string {
   useEffect(() => {
     dispatch(
       getProductPricing({
-        offset: (currentPage - 1) * itemsPerPage, // proper offset
+        offset: (currentPage - 1), // proper offset
         limit: itemsPerPage,
         searchValue: searchValue.trim(),
       })
     );
   }, [dispatch, currentPage, itemsPerPage, searchValue]);
+
+
+
+
+  // In ProductPricing.tsx
+  const handleUpdateSuccess = () => {
+    dispatch(
+      getProductPricing({
+        offset: currentPage - 1,
+        limit: itemsPerPage,
+        searchValue,
+      })
+    );
+  };
 
   return (
     <div className="page-content">
@@ -139,7 +153,9 @@ function formatToIST(dateString: string): string {
               isOpen={isEditModalOpen}
               toggle={toggleEditModal}
               productPricing={selectedItem}
+              onSuccess={handleUpdateSuccess}
             />
+
           )}
 
           {/* Table */}
